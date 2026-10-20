@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05070c">
+<title>Doğukan Sansar — Hikâye</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05070c; --text: #f1f4f9; --muted: rgba(241,244,249,.66);
+    --job: #fbbf24; --project: #38bdf8; --skill: #4ade80; --edu: #c084fc; --ctf: #f87171;
+    --mono: "JetBrains Mono", ui-monospace, monospace; --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: #000; color: var(--text); font-family: var(--sans); overflow: hidden; }
+  body { display: grid; place-items: center; height: 100dvh; }
+  button { font: inherit; color: inherit; }
+
+  .phone { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--bg); user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  @media (min-width: 600px) { .phone { width: 420px; height: min(100dvh, 860px); border-radius: 22px; } }
+
+  /* Üst kısım */
+  .top { position: absolute; z-index: 5; left: 0; right: 0; top: 0; padding: calc(10px + env(safe-area-inset-top)) 10px 0;
+         background: linear-gradient(rgba(0,0,0,.45), transparent); pointer-events: none; }
+  .bars { display: flex; gap: 4px; }
+  .bar { flex: 1; height: 2.5px; background: rgba(255,255,255,.28); border-radius: 2px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: #fff; }
+  .head { display: flex; align-items: center; gap: 9px; margin-top: 10px; pointer-events: auto; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #04130c;
+            background: linear-gradient(135deg, var(--skill), var(--project)); box-shadow: 0 0 0 2px #05070c, 0 0 0 3.5px var(--skill); }
+  .head b { font-size: 14px; font-weight: 600; }
+  .head small { color: var(--muted); font-size: 12.5px; margin-left: 4px; }
+  .head .sp { flex: 1; }
+  .icon { background: none; border: 0; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer; font-size: 18px; color: #fff; text-decoration: none; }
+  .lang { font-family: var(--mono); font-size: 11px; border: 1px solid rgba(255,255,255,.3); border-radius: 7px; padding: 4px 8px; background: none; cursor: pointer; }
+
+  /* Slaytlar */
+  .slide { position: absolute; inset: 0; padding: calc(96px + env(safe-area-inset-top)) 26px calc(40px + env(safe-area-inset-bottom));
+           display: flex; flex-direction: column; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .35s, visibility .35s; isolation: isolate; }
+  .slide.on { opacity: 1; visibility: visible; }
+  .slide::before { content: ""; position: absolute; inset: 0; z-index: -1;
+    background: radial-gradient(120% 70% at 85% 10%, color-mix(in srgb, var(--c) 38%, transparent), transparent 60%),
+                radial-gradient(90% 60% at 0% 100%, color-mix(in srgb, var(--c2, var(--c)) 26%, transparent), transparent 65%), var(--bg); }
+  .slide .ghost { position: absolute; right: -10px; bottom: 40px; z-index: -1; font-family: var(--mono); font-weight: 700; font-size: 170px; line-height: 1;
+                  color: transparent; -webkit-text-stroke: 1.5px color-mix(in srgb, var(--c) 30%, transparent); pointer-events: none; }
+  .a { opacity: 0; transform: translateY(18px); }
+  .slide.on .a { animation: up .6s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--d, 0) * 90ms + 120ms); }
+  @keyframes up { to { opacity: 1; transform: none; } }
+  .paused .slide.on .a { animation-play-state: paused; }
+
+  .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--c); display: flex; align-items: center; gap: 8px; }
+  .kicker i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
+  h1 { font-size: clamp(40px, 13vw, 58px); line-height: .98; letter-spacing: -0.04em; font-weight: 900; margin: 14px 0 12px; }
+  h2 { font-size: clamp(32px, 10vw, 44px); line-height: 1.04; letter-spacing: -0.03em; font-weight: 800; margin: 12px 0 8px; }
+  .org { font-size: 17px; color: var(--muted); }
+  p { font-size: 17px; line-height: 1.55; color: rgba(241,244,249,.86); margin: 12px 0 0; }
+  .pill { display: inline-block; font-family: var(--mono); font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--c) 60%, transparent); color: var(--c); }
+  .points { list-style: none; padding: 0; margin: 18px 0 0; counter-reset: p; }
+  .points li { counter-increment: p; display: grid; grid-template-columns: 34px 1fr; gap: 6px; font-size: 16.5px; line-height: 1.45; margin: 12px 0; }
+  .points li::before { content: "0" counter(p); font-family: var(--mono); color: var(--c); font-size: 13px; padding-top: 3px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+  .chip { font-family: var(--mono); font-size: 12.5px; padding: 5px 10px; border-radius: 7px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }
+  .grp { margin-top: 16px; }
+  .grp b { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--c); font-weight: 500; }
+  .grp .chips { margin-top: 8px; }
+  .lng { margin-top: 14px; }
+  .lng .row { display: flex; justify-content: space-between; font-size: 17px; font-weight: 600; }
+  .lng .row span { font-family: var(--mono); font-size: 13px; color: var(--c); font-weight: 500; }
+  .lng .meter { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 7px; }
+  .lng .meter i { height: 5px; border-radius: 3px; background: rgba(255,255,255,.12); }
+  .lng .meter i.f { background: var(--c); box-shadow: 0 0 10px color-mix(in srgb, var(--c) 60%, transparent); }
+  .btns { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; position: relative; z-index: 6; }
+  .btn { display: flex; justify-content: space-between; align-items: center; padding: 15px 18px; border-radius: 14px; text-decoration: none; color: var(--text);
+         background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); font-weight: 600; font-size: 16px; }
+  .btn.main { background: var(--c); color: #04130c; border-color: var(--c); }
+  .btn span { font-family: var(--mono); font-weight: 400; font-size: 13px; opacity: .75; }
+  .post { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.1); display: block; color: var(--text); text-decoration: none; position: relative; z-index: 6; }
+  .post small { font-family: var(--mono); font-size: 11px; color: var(--c); letter-spacing: .08em; }
+  .post b { display: block; font-size: 17px; margin-top: 4px; }
+  .hint { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); left: 0; right: 0; text-align: center; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+  .hint b { color: var(--text); font-weight: 500; }
+
+  .end { position: absolute; inset: 0; z-index: 8; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(5,7,12,.86); backdrop-filter: blur(8px); }
+  .end.on { display: flex; }
+  .end button, .end a { min-width: 220px; text-align: center; padding: 14px 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.06); color: var(--text); text-decoration: none; font-weight: 600; cursor: pointer; }
+  .end button { background: var(--skill); color: #04130c; border-color: var(--skill); }
+
+  @media (prefers-reduced-motion: reduce) { .a { opacity: 1; transform: none; } .slide.on .a { animation: none; } }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div class="top">
+    <div class="bars" id="bars"></div>
+    <div class="head">
+      <div class="avatar" aria-hidden="true">DS</div>
+      <b id="name"></b><small id="when"></small>
+      <span class="sp"></span>
+      <button class="lang" id="lang"></button>
+      <a class="icon" href="./" aria-label="Kapat">✕</a>
+    </div>
+  </div>
+  <div id="slides"></div>
+  <div class="end" id="end">
+    <button id="replay"></button>
+    <a href="../klasik.html" id="end-cv"></a>
+    <a href="./" id="end-back"></a>
+  </div>
+</div>
+
+<script src="../assets/veri.js"></script>
+<script>
+const UI = {
+  tr: { hello: "// merhaba, ben", tapHint: "<b>dokun</b> → ileri · <b>basılı tut</b> → durdur", exp: "Deneyim", project: "Proje",
+        skillsT: "Neler biliyorum", eduT: "Okul ve diller", edu: "Eğitim", postsT: "CTF & Blog", postsNone: "İlk CTF çözümlerim yakında burada.",
+        readOrbit: "Orbit yazısını oku", contactK: "İletişim", contactT: "Bir mesaj uzağındayım.", mail: "E-posta", open: "Aç",
+        replay: "↺ Baştan izle", cv: "Klasik CV", back: "Diğer sürümler", allPosts: "Tüm yazılar" },
+  en: { hello: "// hi, I'm", tapHint: "<b>tap</b> → next · <b>hold</b> → pause", exp: "Experience", project: "Project",
+        skillsT: "What I know", eduT: "School & languages", edu: "Education", postsT: "CTF & Blog", postsNone: "My first CTF write-ups are coming soon.",
+        readOrbit: "Read the Orbit post", contactK: "Contact", contactT: "I'm one message away.", mail: "Email", open: "Open",
+        replay: "↺ Watch again", cv: "Classic CV", back: "Other versions", allPosts: "All posts" },
+};
+const u = () => UI[lang];
+const $ = (id) => document.getElementById(id);
+const C = { self: "#4ade80", job: "#fbbf24", project: "#38bdf8", skill: "#4ade80", edu: "#c084fc", ctf: "#f87171" };
+let posts = [];
+
+const LEVEL = { native: 6, "ana dil": 6, c2: 6, c1: 5, b2: 4, b1: 3, a2: 2, a1: 1 };
+function parseLangs() {
+  return T(PROFILE.languages).split("·").map((s) => {
+    const m = s.trim().match(/^(.*?)\s*\((.*)\)$/);
+    const name = m ? m[1] : s.trim(), lvl = m ? m[2] : "";
+    return { name, lvl, n: LEVEL[lvl.toLocaleLowerCase("tr")] || 3 };
+  });
+}
+
+/* Her slayt: { c: renk, c2, ghost, html } */
+function buildSlides() {
+  const s = [];
+  const a = (d, html) => `<div class="a" style="--d:${d}">${html}</div>`;
+  s.push({ c: C.skill, c2: C.project, ghost: "&gt;_", html:
+    a(0, `<div class="kicker"><i></i>${u().hello}</div>`) +
+    a(1, `<h1>${esc(PROFILE.name).replace(" ", "<br>")}</h1>`) +
+    a(2, `<span class="pill">${esc(T(PROFILE.role))}</span>`) +
+    a(3, `<p>${esc(T(PROFILE.summary))}</p>`) +
+    `<div class="hint">${u().tapHint}</div>` });
+
+  for (const j of ofType("job")) s.push({ c: C.job, c2: C.project, ghost: "01", html:
+    a(0, `<div class="kicker"><i></i>${u().exp} · ${esc(T(j.date))}</div>`) +
+    a(1, `<h2>${esc(T(j.title))}</h2>`) + a(2, `<div class="org">@ ${esc(T(j.org))}</div>`) +
+    a(3, `<ul class="points">${(T(j.points) || []).map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`) });
+
+  const projects = ofType("project").slice().sort((x, y) => (x.id === "orbit" ? -1 : y.id === "orbit" ? 1 : 0));
+  projects.forEach((p, i) => s.push({ c: C.project, c2: i % 2 ? C.edu : C.skill, ghost: String(i + 2).padStart(2, "0"), html:
+    a(0, `<div class="kicker"><i></i>${u().project} · ${Math.floor(p.year)}</div>`) +
+    a(1, `<h2>${esc(T(p.title))}</h2>`) +
+    a(2, `<p>${esc(T(p.desc))}</p>`) +
+    a(3, `<div class="chips">${skillsOf(p).map((k) => `<span class="chip">${esc(T(k.title))}</span>`).join("")}</div>`) +
+    (p.url ? a(4, `<div class="btns"><a class="btn main" href="${esc(rootUrl(p.url))}">${p.id === "orbit" ? u().readOrbit : u().open}<span>→</span></a></div>`) : "") }));
+
+  const groups = {};
+  ofType("skill").forEach((k) => (groups[k.group] = groups[k.group] || []).push(k));
+  s.push({ c: C.skill, c2: C.edu, ghost: "{ }", html:
+    a(0, `<div class="kicker"><i></i>${ofType("skill").length} ${lang === "tr" ? "yetenek" : "skills"}</div>`) + a(1, `<h2>${u().skillsT}</h2>`) +
+    Object.entries(groups).map(([g, list], i) => a(2 + i, `<div class="grp"><b>${esc(T(SKILL_GROUPS[g]))}</b><div class="chips">${list.map((k) => `<span class="chip">${esc(T(k.title))}</span>`).join("")}</div></div>`)).join("") });
+
+  const edu = ofType("edu")[0];
+  s.push({ c: C.edu, c2: C.project, ghost: "Aa", html:
+    a(0, `<div class="kicker"><i></i>${u().edu}</div>`) + a(1, `<h2>${u().eduT}</h2>`) +
+    (edu ? a(2, `<p><b>${esc(T(edu.title))}</b> · ${esc(T(edu.date))}<br>${esc(T(edu.desc))}</p>`) : "") +
+    parseLangs().map((l, i) => a(3 + i, `<div class="lng"><div class="row">${esc(l.name)}<span>${esc(l.lvl)}</span></div><div class="meter">${Array.from({ length: 6 }, (_, k) => `<i class="${k < l.n ? "f" : ""}"></i>`).join("")}</div></div>`)).join("") });
+
+  s.push({ c: C.ctf, c2: C.project, ghost: "#", html:
+    a(0, `<div class="kicker"><i></i>${posts.length} ${lang === "tr" ? "yazı" : "posts"}</div>`) + a(1, `<h2>${u().postsT}</h2>`) +
+    (posts.length
+      ? posts.slice(0, 4).map((p, i) => a(2 + i, `<a class="post" href="../yazi.html?y=${encodeURIComponent(p.slug)}"><small>${p.tur === "ctf" ? "CTF" : "BLOG"} · ${esc(p.tarih)}</small><b>${esc(p.baslik)}</b></a>`)).join("")
+      : a(2, `<p>${u().postsNone}</p>`)) +
+    a(6, `<div class="btns"><a class="btn" href="../yazilar.html">${u().allPosts}<span>→</span></a></div>`) });
+
+  s.push({ c: C.skill, c2: C.project, ghost: "@", html:
+    a(0, `<div class="kicker"><i></i>${u().contactK}</div>`) + a(1, `<h2>${u().contactT}</h2>`) +
+    a(2, `<div class="btns">
+      <a class="btn main" href="mailto:${esc(PROFILE.email)}">${u().mail}<span>${esc(PROFILE.email)}</span></a>
+      ${PROFILE.socials.map((x) => `<a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}<span>↗</span></a>`).join("")}
+      <a class="btn" href="../klasik.html">${u().cv}<span>→</span></a></div>`) });
+  return s;
+}
+
+/* ---- Oynatıcı ---- */
+let slides = [], idx = 0, prog = 0, paused = false, lastT = 0, ended = false;
+const dur = (i) => Math.min(11000, 5000 + slides[i].text * 22);
+
+function render() {
+  document.documentElement.lang = lang;
+  $("name").textContent = PROFILE.name.split(" ")[0];
+  $("lang").innerHTML = lang === "tr" ? "TR" : "EN";
+  $("replay").textContent = u().replay; $("end-cv").textContent = u().cv; $("end-back").textContent = u().back;
+  slides = buildSlides();
+  $("slides").innerHTML = slides.map((s, i) =>
+    `<section class="slide" style="--c:${s.c};--c2:${s.c2}" aria-hidden="true"><div class="ghost">${s.ghost}</div>${s.html}</section>`).join("");
+  document.querySelectorAll(".slide").forEach((el, i) => (slides[i].text = el.textContent.length));
+  $("bars").innerHTML = slides.map(() => "<div class='bar'><i></i></div>").join("");
+  go(Math.min(idx, slides.length - 1), true);
+}
+function go(i, keepProg) {
+  if (i < 0) i = 0;
+  if (i >= slides.length) { finish(); return; }
+  idx = i; if (!keepProg) prog = 0;
+  ended = false; $("end").classList.remove("on");
+  document.querySelectorAll(".slide").forEach((el, k) => { el.classList.toggle("on", k === i); el.setAttribute("aria-hidden", k !== i); });
+  document.querySelectorAll(".bar i").forEach((b, k) => (b.style.width = k < i ? "100%" : k > i ? "0%" : (prog * 100) + "%"));
+  $("when").textContent = "· " + new Date().getFullYear();
+}
+function finish() {
+  ended = true; prog = 1;
+  document.querySelectorAll(".bar i").forEach((b) => (b.style.width = "100%"));
+  $("end").classList.add("on");
+}
+function tick(t) {
+  const dt = lastT ? Math.min(250, t - lastT) : 0; lastT = t;
+  if (!paused && !ended && slides.length) {
+    prog += dt / dur(idx);
+    if (prog >= 1) go(idx + 1);
+    else { const b = document.querySelectorAll(".bar i")[idx]; if (b) b.style.width = (prog * 100) + "%"; }
+  }
+  requestAnimationFrame(tick);
+}
+
+/* Dokunma: kısa dokunuş = ileri/geri, basılı tutma = durdur */
+let downAt = 0, downX = 0, holdTimer = null;
+const phone = $("phone");
+phone.addEventListener("pointerdown", (e) => {
+  if (e.target.closest("a, button")) return;
+  downAt = performance.now(); downX = e.clientX;
+  holdTimer = setTimeout(() => { paused = true; phone.classList.add("paused"); }, 180);
+});
+phone.addEventListener("pointerup", (e) => {
+  if (!downAt) return;
+  clearTimeout(holdTimer);
+  const held = performance.now() - downAt; downAt = 0;
+  if (paused) { paused = false; phone.classList.remove("paused"); if (held > 180) return; }
+  const r = phone.getBoundingClientRect();
+  if (downX - r.left < r.width * 0.33) go(idx - 1); else go(idx + 1);
+});
+phone.addEventListener("pointercancel", () => { clearTimeout(holdTimer); downAt = 0; paused = false; phone.classList.remove("paused"); });
+phone.addEventListener("contextmenu", (e) => e.preventDefault());
+addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight") go(idx + 1);
+  if (e.key === "ArrowLeft") go(idx - 1);
+  if (e.key === " ") { e.preventDefault(); paused = !paused; phone.classList.toggle("paused", paused); }
+});
+document.addEventListener("visibilitychange", () => { if (document.hidden) lastT = 0; });
+
+$("replay").onclick = () => { idx = 0; go(0); };
+$("lang").onclick = () => { setLang(lang === "tr" ? "en" : "tr"); render(); };
+
+render();
+requestAnimationFrame(tick);
+loadPosts().then((p) => { posts = p; const keep = idx, kp = prog; render(); idx = keep; prog = kp; go(keep, true); });
+</script>
+</body>
+</html>

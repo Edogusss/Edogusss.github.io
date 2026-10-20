@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#030604">
+<title>Doğukan Sansar — Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #030604; --bar: #0a110c; --g: #4ade80; --g2: #86efac; --dim: #5b7a64; --text: #d7f5df; --c: #38bdf8; --y: #fbbf24; --r: #f87171; --p: #c084fc;
+          --mono: "JetBrains Mono", ui-monospace, Consolas, monospace; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--mono); }
+  body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+  body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9;
+    background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.18) 2px 3px); mix-blend-mode: multiply; }
+  button, input { font: inherit; color: inherit; }
+  a { color: var(--c); }
+
+  header { display: flex; align-items: center; gap: 8px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; background: var(--bar); border-bottom: 1px solid #14301d; font-size: 12px; color: var(--dim); flex-shrink: 0; }
+  header .dots { display: flex; gap: 6px; }
+  header .dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  header .dots a:nth-child(1) i { background: #f87171; } header .dots i:nth-child(2) { background: #fbbf24; } header .dots i:nth-child(3) { background: var(--g); }
+  header .title { flex: 1; text-align: center; }
+  .lang { background: none; border: 1px solid #1d3a26; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--dim); }
+  .lang b { color: var(--g); }
+
+  #out { flex: 1; overflow-y: auto; padding: 12px 12px 6px; font-size: 13.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; overscroll-behavior: contain; }
+  #out .ln { min-height: 1.55em; }
+  .pr { color: var(--g); } .pr .path { color: var(--c); }
+  .dim { color: var(--dim); } .g { color: var(--g); } .g2 { color: var(--g2); } .c { color: var(--c); } .y { color: var(--y); } .r { color: var(--r); } .p { color: var(--p); }
+  .b { font-weight: 700; }
+  .ascii { color: var(--g); font-size: clamp(6px, 2.35vw, 11px); line-height: 1.15; text-shadow: 0 0 8px rgba(74,222,128,.5); }
+  .glow { text-shadow: 0 0 10px rgba(74,222,128,.55); }
+  #out a { text-decoration: underline; }
+  .cursor { display: inline-block; width: .6em; background: var(--g); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  footer { background: var(--bar); border-top: 1px solid #14301d; flex-shrink: 0; padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); }
+  .keys { display: flex; gap: 6px; overflow-x: auto; padding: 0 10px 8px; scrollbar-width: none; }
+  .keys::-webkit-scrollbar { display: none; }
+  .key { flex-shrink: 0; padding: 8px 11px; border-radius: 7px; border: 1px solid #1d3a26; background: #0d1a11; color: var(--g2); font-size: 12.5px; cursor: pointer; white-space: nowrap; }
+  .key:active { background: #163020; }
+  .key.alt { color: var(--y); border-color: #3a3214; background: #17140a; }
+  form { display: flex; align-items: center; gap: 8px; padding: 0 12px; }
+  form .pr { flex-shrink: 0; font-size: 13.5px; }
+  form input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; font-size: 16px; color: var(--text); caret-color: var(--g); padding: 6px 0; }
+  form input::placeholder { color: #2f4a37; }
+
+  #matrix { position: fixed; inset: 0; z-index: 8; display: none; }
+  @media (min-width: 700px) { body { max-width: 640px; margin: 0 auto; border-left: 1px solid #14301d; border-right: 1px solid #14301d; } }
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="dots"><a href="./" aria-label="Kapat"><i></i></a><i></i><i></i></div>
+  <div class="title">dogukan@sansar: ~</div>
+  <button class="lang" id="lang"></button>
+</header>
+<div id="out" aria-live="polite"></div>
+<footer>
+  <div class="keys" id="keys"></div>
+  <form id="form"><span class="pr">❯</span><input id="cmd" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"></form>
+</footer>
+<canvas id="matrix"></canvas>
+
+<script src="../assets/veri.js"></script>
+<script>
+const UI = {
+  tr: {
+    boot: ["[ OK ] çekirdek yüklendi: dogukan-os 2026", "[ OK ] ağ arayüzü: edogusss.github.io", "[ OK ] pentest araçları hazır", "[ OK ] kahve seviyesi: yeterli ☕"],
+    welcome: "Hoş geldin. Komutlara dokunarak gezebilir ya da yazabilirsin.", tryHelp: "Başlamak için <span class='g'>help</span> yaz.",
+    placeholder: "komut yaz… (help)", notFound: (c) => `komut bulunamadı: ${c}. <span class='g'>help</span> yazmayı dene.`,
+    help: "Kullanılabilir komutlar", noPosts: "henüz yazı yok, ilk CTF çözümleri yakında.",
+    hire: ["[sudo] dogukan için parola: ********", "✔ yetki verildi.", "İşe alım süreci başlatılıyor…", "→ "],
+    rm: "güzel deneme 😏 ama bu sistem salt okunur.", exit: "çıkılıyor…", hack: "erişim reddedildi. ama yetenekli birini arıyorsan doğru yerdesin.",
+    clear: "ekranı temizler", desc: {
+      whoami: "ben kimim", about: "kısa tanıtım", experience: "iş deneyimi", projects: "projeler", cat: "bir projeyi aç (örn. cat orbit)",
+      skills: "yetenekler", languages: "konuştuğum diller", education: "eğitim", posts: "CTF & blog yazıları", contact: "iletişim",
+      cv: "klasik CV'yi aç", gui: "masaüstü sürümü aç", exit: "sürüm seçimine dön", help: "bu liste" },
+    labels: { role: "rol", status: "durum", location: "konum", student: "lise öğrencisi + çalışıyor", web: "web" },
+  },
+  en: {
+    boot: ["[ OK ] kernel loaded: dogukan-os 2026", "[ OK ] network: edogusss.github.io", "[ OK ] pentest tooling ready", "[ OK ] coffee level: sufficient ☕"],
+    welcome: "Welcome. Tap the commands below or type them.", tryHelp: "Type <span class='g'>help</span> to get started.",
+    placeholder: "type a command… (help)", notFound: (c) => `command not found: ${c}. Try <span class='g'>help</span>.`,
+    help: "Available commands", noPosts: "no posts yet, first CTF write-ups coming soon.",
+    hire: ["[sudo] password for dogukan: ********", "✔ access granted.", "Starting hiring process…", "→ "],
+    rm: "nice try 😏 this system is read-only.", exit: "exiting…", hack: "access denied. but if you're looking for someone skilled, you're in the right place.",
+    clear: "clear the screen", desc: {
+      whoami: "who am I", about: "short intro", experience: "work experience", projects: "projects", cat: "open a project (e.g. cat orbit)",
+      skills: "skills", languages: "languages I speak", education: "education", posts: "CTF & blog posts", contact: "contact",
+      cv: "open the classic CV", gui: "open the desktop version", exit: "back to versions", help: "this list" },
+    labels: { role: "role", status: "status", location: "location", student: "high school student + working", web: "web" },
+  },
+};
+const u = () => UI[lang];
+const $ = (id) => document.getElementById(id);
+const out = $("out");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sleep = (ms) => new Promise((r) => setTimeout(r, reduced ? 0 : ms));
+let posts = [], busy = false, hist = [], hIdx = -1, run = 0;
+
+const LOGO = String.raw`
+ ____                    _
+|  _ \  ___   __ _ _   _| | ____ _ _ __
+| | | |/ _ \ / _\` | | | | |/ / _\` | '_ \
+| |_| | (_) | (_| | |_| |   < (_| | | | |
+|____/ \___/ \__, |\__,_|_|\_\__,_|_| |_|
+             |___/`;
+
+const slug = (x) => T(x.title).toLocaleLowerCase("tr").replace(/[çğıöşü]/g, (c) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u" }[c])).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const projectKey = (p) => (p.id === "testlab" ? "lab" : p.id === "xsslab" ? "xss" : p.id === "site" ? "site" : slug(p));
+const scroll = () => (out.scrollTop = out.scrollHeight);
+
+async function print(html, cls = "", delay = 18) {
+  const d = document.createElement("div");
+  d.className = "ln " + cls;
+  d.innerHTML = html;
+  out.append(d); scroll();
+  await sleep(delay);
+}
+const prompt = (cmd) => `<span class="pr">dogukan@sansar <span class="path">~</span> ❯</span> ${esc(cmd)}`;
+const kv = (k, v, pad = 10) => `<span class="dim">${esc(k.padEnd(pad))}</span>${v}`;
+const lnk = (href, text) => `<a href="${esc(href)}"${/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : ""}>${esc(text)}</a>`;
+
+/* ---- Komutlar ---- */
+const CMDS = {
+  async help() {
+    await print(`<span class="b g">${u().help}</span>`);
+    const list = ["whoami", "about", "experience", "projects", "cat", "skills", "languages", "education", "posts", "contact", "cv", "gui", "clear", "exit"];
+    for (const c of list) await print(`  <span class="g2">${c.padEnd(11)}</span><span class="dim">${c === "clear" ? u().clear : u().desc[c]}</span>`, "", 10);
+    await print(`<span class="dim">  …${lang === "tr" ? "ve birkaç gizli komut" : "and a few hidden ones"} 🤫</span>`);
+  },
+  async whoami() {
+    await print(`<pre class="ascii" style="margin:0">${esc(LOGO)}</pre>`, "", 60);
+    await print(`<span class="b glow">${esc(PROFILE.name)}</span>`);
+    await print(kv(u().labels.role, `<span class="y">${esc(T(PROFILE.role))}</span>`));
+    await print(kv(u().labels.status, esc(u().labels.student)));
+    await print(kv(u().labels.web, lnk("https://edogusss.github.io", "edogusss.github.io")));
+  },
+  async about() { await print(esc(T(PROFILE.summary))); },
+  async experience() {
+    for (const j of ofType("job")) {
+      await print(`<span class="y b">● ${esc(T(j.title))}</span> <span class="dim">@</span> ${esc(T(j.org))}  <span class="dim">${esc(T(j.date))}</span>`);
+      for (const p of T(j.points) || []) await print(`  <span class="g">▹</span> ${esc(p)}`);
+      await print(`  <span class="dim">${skillsOf(j).map((k) => T(k.title)).join(" · ")}</span>`);
+    }
+  },
+  async projects() {
+    await print(`<span class="dim">total ${ofType("project").length}</span>`);
+    for (const p of ofType("project").slice().sort((a, b) => b.year - a.year))
+      await print(`<span class="dim">drwxr-xr-x  ${Math.floor(p.year)}</span>  <span class="c b">${esc(projectKey(p))}/</span>  <span class="dim">— ${esc(T(p.title))}</span>`);
+    await print(`<span class="dim">${lang === "tr" ? "ayrıntı için" : "for details"}:</span> <span class="g">cat ${esc(projectKey(byId.orbit))}</span>`);
+  },
+  async cat(arg) {
+    const key = (arg || "").toLowerCase().replace(/\/$/, "").replace(/\.md$/, "");
+    const p = ofType("project").find((x) => projectKey(x) === key || x.id === key);
+    if (!p) {
+      await print(`<span class="r">cat: ${esc(arg || "")}: ${lang === "tr" ? "böyle bir dosya yok" : "no such file"}</span>`);
+      await print(`<span class="dim">${lang === "tr" ? "dene" : "try"}:</span> ${ofType("project").map((x) => `<span class="g">cat ${projectKey(x)}</span>`).join("  ")}`);
+      return;
+    }
+    await print(`<span class="c b"># ${esc(T(p.title))}</span>  <span class="dim">(${Math.floor(p.year)})</span>`);
+    await print(esc(T(p.desc)));
+    await print(`<span class="dim">stack:</span> <span class="g2">${skillsOf(p).map((k) => esc(T(k.title))).join(", ")}</span>`);
+    if (p.url) await print(`<span class="dim">→</span> ${lnk(rootUrl(p.url), p.id === "orbit" ? (lang === "tr" ? "yazının tamamını oku" : "read the full post") : (lang === "tr" ? "aç" : "open"))}`);
+  },
+  async skills() {
+    const groups = {};
+    ofType("skill").forEach((k) => (groups[k.group] = groups[k.group] || []).push(k));
+    for (const [g, list] of Object.entries(groups)) {
+      await print(`<span class="p b">[${esc(T(SKILL_GROUPS[g]))}]</span>`);
+      await print("  " + list.map((k) => `<span class="g2">${esc(T(k.title))}</span>`).join(`<span class="dim"> · </span>`));
+    }
+  },
+  async languages() {
+    for (const s of T(PROFILE.languages).split("·")) {
+      const m = s.trim().match(/^(.*?)\s*\((.*)\)$/), name = m ? m[1] : s.trim(), lvl = m ? m[2] : "";
+      const n = { c2: 6, c1: 5, b2: 4, b1: 3, a2: 2, a1: 1 }[lvl.toLowerCase()] || 6;
+      await print(`${esc(name.padEnd(10))} <span class="g">${"█".repeat(n)}</span><span class="dim">${"░".repeat(6 - n)}</span> <span class="y">${esc(lvl)}</span>`);
+    }
+  },
+  async education() { for (const e of ofType("edu")) { await print(`<span class="p b">● ${esc(T(e.title))}</span>  <span class="dim">${esc(T(e.date))}</span>`); await print(`  ${esc(T(e.desc))}`); } },
+  async posts() {
+    if (!posts.length) { await print(`<span class="dim">${u().noPosts}</span>`); await print(`<span class="dim">→</span> ${lnk("../yazi.html?y=orbit", "orbit.md")}`); return; }
+    for (const p of posts) await print(`<span class="${p.tur === "ctf" ? "r" : "c"}">[${p.tur.toUpperCase()}]</span> <span class="dim">${esc(p.tarih)}</span>  ${lnk("../yazi.html?y=" + encodeURIComponent(p.slug), p.baslik)}`);
+    await print(`<span class="dim">→</span> ${lnk("../yazilar.html", lang === "tr" ? "tüm yazılar" : "all posts")}`);
+  },
+  async contact() {
+    await print(kv("email", lnk("mailto:" + PROFILE.email, PROFILE.email)));
+    for (const s of PROFILE.socials) await print(kv(s.label.toLowerCase(), lnk(s.url, s.url.replace(/^https?:\/\/(www\.)?/, "").replace(/%C4%9F/g, "ğ"))));
+  },
+  async cv() { await print(`<span class="dim">→</span> ${lnk("../klasik.html", "klasik.html")}`); location.href = "../klasik.html"; },
+  async gui() { await print(`<span class="dim">→</span> ${lnk("../index.html", "index.html")}`); location.href = "../index.html"; },
+  async exit() { await print(`<span class="dim">${u().exit}</span>`); location.href = "./"; },
+  async clear() { out.innerHTML = ""; },
+  /* gizli komutlar */
+  async sudo(arg) {
+    if (!/hire/i.test(arg || "")) { await print(`<span class="dim">usage: sudo hire-me</span>`); return; }
+    for (const l of u().hire.slice(0, 3)) await print(l.startsWith("✔") ? `<span class="g">${l}</span>` : esc(l), "", 380);
+    await print(`${u().hire[3]}${lnk("mailto:" + PROFILE.email, PROFILE.email)}`);
+  },
+  async rm() { await print(`<span class="r">${u().rm}</span>`); },
+  async hack() { await print(`<span class="r">${u().hack}</span>`); },
+  async nmap() {
+    await print(`<span class="dim">Starting Nmap 7.95 ( https://nmap.org )</span>`);
+    await print(`Nmap scan report for dogukan (127.0.0.1)`, "", 300);
+    await print(`<span class="dim">PORT     STATE SERVICE</span>`);
+    await print(`22/tcp   <span class="g">open</span>  curiosity`, "", 120);
+    await print(`80/tcp   <span class="g">open</span>  edogusss.github.io`, "", 120);
+    await print(`443/tcp  <span class="g">open</span>  new-opportunities`, "", 120);
+    await print(`<span class="dim">Nmap done: 1 IP address (1 host up)</span>`);
+  },
+  async matrix() { await matrixRain(); },
+  async ls() { return CMDS.projects(); },
+  async pwd() { await print("/home/dogukan"); },
+  async date() { await print(new Date().toString()); },
+};
+const ALIAS = { deneyim: "experience", projeler: "projects", yetenekler: "skills", diller: "languages", egitim: "education", eğitim: "education",
+  yazilar: "posts", yazılar: "posts", blog: "posts", ctf: "posts", iletisim: "contact", iletişim: "contact", hakkinda: "about", hakkında: "about",
+  yardim: "help", yardım: "help", "?": "help", cls: "clear", work: "experience", man: "help" };
+
+async function exec(line) {
+  line = line.trim();
+  if (!line || busy) return;
+  busy = true;
+  hist.unshift(line); hIdx = -1;
+  await print(prompt(line), "", 40);
+  const [raw, ...rest] = line.split(/\s+/);
+  let cmd = raw.toLowerCase();
+  cmd = ALIAS[cmd] || cmd;
+  if (cmd === "rm" && !/-rf/.test(rest.join(" "))) cmd = "notfound";
+  const fn = CMDS[cmd];
+  const r = run;
+  try {
+    if (fn) await fn(rest.join(" "));
+    else await print(u().notFound(esc(raw)));
+  } finally {
+    if (r === run) { await print("", "", 0); busy = false; }
+  }
+}
+
+/* ---- Matrix yağmuru ---- */
+async function matrixRain() {
+  if (reduced) { await print(`<span class="g">wake up, neo…</span>`); return; }
+  const c = $("matrix"), x = c.getContext("2d");
+  c.width = innerWidth; c.height = innerHeight; c.style.display = "block";
+  const cols = Math.floor(c.width / 14), drops = Array(cols).fill(0).map(() => Math.random() * -40);
+  const chars = "アカサタナハマヤラワ0123456789DOGUKANSANSAR<>/{}$#";
+  const end = performance.now() + 3200;
+  await new Promise((res) => {
+    (function f(t) {
+      x.fillStyle = "rgba(3,6,4,.12)"; x.fillRect(0, 0, c.width, c.height);
+      x.fillStyle = "#4ade80"; x.font = "14px JetBrains Mono, monospace";
+      drops.forEach((y, i) => { x.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, y * 14); drops[i] = y * 14 > c.height && Math.random() > .97 ? 0 : y + 1; });
+      if (t < end) requestAnimationFrame(f); else res();
+    })(performance.now());
+  });
+  c.style.display = "none";
+  await print(`<span class="g">wake up, neo… the CV has you.</span>`);
+}
+
+/* ---- Arayüz ---- */
+const KEYS = ["help", "whoami", "experience", "projects", "cat orbit", "cat lab", "skills", "languages", "posts", "contact", "cv", "sudo hire-me", "clear"];
+function renderKeys() {
+  $("keys").innerHTML = KEYS.map((k) => `<button class="key${k.startsWith("sudo") ? " alt" : ""}" data-cmd="${k}">${k}</button>`).join("");
+}
+$("keys").addEventListener("click", (e) => { const b = e.target.closest("[data-cmd]"); if (b) exec(b.dataset.cmd); });
+$("form").addEventListener("submit", (e) => { e.preventDefault(); const v = $("cmd").value; $("cmd").value = ""; exec(v); });
+$("cmd").addEventListener("keydown", (e) => {
+  if (e.key === "ArrowUp" && hist.length) { e.preventDefault(); hIdx = Math.min(hIdx + 1, hist.length - 1); $("cmd").value = hist[hIdx]; }
+  if (e.key === "ArrowDown") { e.preventDefault(); hIdx = Math.max(hIdx - 1, -1); $("cmd").value = hIdx < 0 ? "" : hist[hIdx]; }
+  if (e.key === "Tab") {
+    e.preventDefault();
+    const v = $("cmd").value.toLowerCase(), m = Object.keys(CMDS).filter((c) => c.startsWith(v));
+    if (m.length === 1) $("cmd").value = m[0] + " ";
+  }
+});
+
+async function boot() {
+  run++; busy = true; out.innerHTML = "";
+  document.documentElement.lang = lang;
+  $("lang").innerHTML = lang === "tr" ? "<b>TR</b>/EN" : "TR/<b>EN</b>";
+  $("cmd").placeholder = u().placeholder;
+  renderKeys();
+  const r = run;
+  for (const l of u().boot) { if (r !== run) return; await print(l.replace("[ OK ]", `<span class="g">[ OK ]</span>`), "dim", 140); }
+  await print("", "", 100);
+  busy = false;
+  if (r !== run) return;
+  await exec("whoami");
+  await print(u().welcome, "dim");
+  await print(u().tryHelp, "dim");
+}
+$("lang").onclick = () => { setLang(lang === "tr" ? "en" : "tr"); boot(); };
+
+loadPosts().then((p) => (posts = p));
+boot();
+</script>
+</body>
+</html>
