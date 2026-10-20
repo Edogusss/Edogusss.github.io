@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yazılar — Doğukan Sansar</title>
+<meta name="description" content="Doğukan Sansar — CTF çözümleri ve blog yazıları">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/yazilar.css">
+</head>
+<body>
+<nav></nav>
+
+<main class="wrap">
+  <header class="hero">
+    <div class="terminal">
+      <div class="term-bar"><i></i><i></i><i></i><small>~/yazilar</small></div>
+      <div class="term-body">
+        <div><span class="prompt">$</span> ls -la ~/yazilar</div>
+        <h1 id="title"></h1>
+        <p class="sub" id="sub"></p>
+        <div class="stats" id="stats"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <input class="search" id="search" type="search" autocomplete="off">
+  </div>
+  <div class="active-tag" id="active-tag"></div>
+  <div class="posts" id="posts"></div>
+</main>
+
+<footer></footer>
+
+<script src="assets/yazilar.js"></script>
+<script>
+let all = [], error = false;
+const params = new URLSearchParams(location.search);
+let filter = ["ctf", "blog"].includes(params.get("tur")) ? params.get("tur") : "all";
+let tag = params.get("etiket") || "";
+let query = "";
+
+function syncUrl() {
+  const p = new URLSearchParams();
+  if (filter !== "all") p.set("tur", filter);
+  if (tag) p.set("etiket", tag);
+  const q = p.toString();
+  try { history.replaceState(null, "", location.pathname + (q ? "?" + q : "")); } catch (e) {}
+}
+
+function render() {
+  const t = u();
+  document.title = `${t.title} — Doğukan Sansar`;
+  $("title").textContent = t.title;
+  $("sub").textContent = t.sub;
+  $("search").placeholder = t.search;
+
+  const ctf = all.filter((p) => p.tur === "ctf"), blog = all.filter((p) => p.tur === "blog");
+  const plats = new Set(ctf.map((p) => p.platform).filter(Boolean));
+  $("stats").innerHTML = error ? "" :
+    `<span><b>${ctf.length}</b> ${t.ctfCount}</span><span><b>${blog.length}</b> ${t.blogCount}</span>` +
+    (plats.size ? `<span><b>${plats.size}</b> ${t.platforms}</span>` : "");
+
+  $("tabs").innerHTML = [["all", t.all, all.length], ["ctf", t.ctf, ctf.length], ["blog", t.blog, blog.length]]
+    .map(([k, label, n]) => `<button class="tab ${filter === k ? "on" : ""}" data-k="${k}" role="tab" aria-selected="${filter === k}">${label}<span class="n">${n}</span></button>`).join("");
+  $("tabs").querySelectorAll(".tab").forEach((b) => (b.onclick = () => { filter = b.dataset.k; syncUrl(); render(); }));
+
+  $("active-tag").innerHTML = tag ? `${t.tagFilter} <b>#${esc(tag)}</b> <button id="clear-tag">${t.clear}</button>` : "";
+  if (tag) $("clear-tag").onclick = () => { tag = ""; syncUrl(); render(); };
+
+  if (error) { $("posts").innerHTML = `<div class="empty">${t.offline}</div>`; return; }
+
+  const q = query.toLocaleLowerCase("tr");
+  const list = all.filter((p) =>
+    (filter === "all" || p.tur === filter) &&
+    (!tag || (p.etiketler || []).includes(tag)) &&
+    (!q || [p.baslik, p.ozet, p.platform, p.kategori, ...(p.etiketler || [])].join(" ").toLocaleLowerCase("tr").includes(q)));
+
+  if (!list.length) {
+    $("posts").innerHTML = `<div class="empty">${all.length ? t.noMatch : t.empty}</div>`;
+    return;
+  }
+  $("posts").innerHTML = list.map((p) => {
+    const d = new Date(p.tarih + "T12:00:00");
+    const ctfMeta = p.tur === "ctf"
+      ? [p.platform, p.kategori].filter(Boolean).map(esc).join(" · ") +
+        (p.zorluk ? ` · <span class="diff ${esc(p.zorluk.toLocaleLowerCase("tr"))}">● ${esc(p.zorluk)}</span>` : "")
+      : "";
+    return `<a class="post" href="yazi.html?y=${encodeURIComponent(p.slug)}">
+      <div class="when"><b>${isNaN(d) ? "" : d.getDate()}</b>${esc(fmtDate(p.tarih, "short").replace(/^\d+\s*/, ""))} ${isNaN(d) ? "" : d.getFullYear()}</div>
+      <div>
+        <div class="meta-line"><span class="badge ${p.tur}">${p.tur === "ctf" ? "CTF" : "Blog"}</span>${ctfMeta ? `<span>${ctfMeta}</span>` : ""}<span>${p.dakika} ${t.min}</span></div>
+        <h2>${esc(p.baslik)}</h2>
+        ${p.ozet ? `<p>${esc(p.ozet)}</p>` : ""}
+        ${(p.etiketler || []).length ? `<div class="tags">${p.etiketler.map((x) => `<span class="tag" data-tag="${esc(x)}">#${esc(x)}</span>`).join("")}</div>` : ""}
+      </div>
+    </a>`;
+  }).join("");
+  // Etikete tıklayınca o etikete göre süz (yazıya gitmeden)
+  $("posts").querySelectorAll(".tag").forEach((el) => (el.onclick = (e) => {
+    e.preventDefault(); tag = el.dataset.tag; syncUrl(); render(); scrollTo({ top: 0 });
+  }));
+}
+
+$("search").addEventListener("input", (e) => { query = e.target.value.trim(); render(); });
+
+mountChrome(render);
+loadList()
+  .then((list) => { all = list; })
+  .catch(() => { error = true; })
+  .finally(render);
+</script>
+</body>
+</html>

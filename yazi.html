@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doğukan Sansar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/yazilar.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<nav></nav>
+
+<main class="wrap wide">
+  <div class="layout">
+    <div>
+      <a class="back" href="yazilar.html" id="back"></a>
+      <article id="article"></article>
+      <div class="pager" id="pager"></div>
+    </div>
+    <aside class="toc" id="toc"></aside>
+  </div>
+</main>
+
+<footer></footer>
+
+<script src="assets/yazilar.js"></script>
+<script>
+const slug = new URLSearchParams(location.search).get("y") || "";
+let post = null, meta = {}, html = "", list = [], failed = false;
+
+const slugify = (s) => s.toLocaleLowerCase("tr")
+  .replace(/[çğıöşü]/g, (c) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u" }[c]))
+  .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "bolum";
+
+function enhance(root) {
+  // başlıklara bağlantı kimliği
+  const used = {};
+  root.querySelectorAll("h2, h3").forEach((h) => {
+    let id = slugify(h.textContent);
+    used[id] = (used[id] || 0) + 1;
+    if (used[id] > 1) id += "-" + used[id];
+    h.id = id;
+  });
+  // yazılar/ klasöründeki resimler doğru yerden yüklensin
+  root.querySelectorAll("img").forEach((img) => {
+    const src = img.getAttribute("src") || "";
+    if (src && !/^(https?:|data:|\/)/.test(src)) img.src = "yazilar/" + src.replace(/^\.\//, "");
+    img.loading = "lazy";
+  });
+  // dış bağlantılar yeni sekmede
+  root.querySelectorAll('a[href^="http"]').forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
+  // flag{...} biçimindeki satır içi kodları vurgula
+  root.querySelectorAll(":not(pre) > code").forEach((c) => {
+    if (/^[A-Za-z0-9_]{2,24}\{[^{}\s]+\}$/.test(c.textContent.trim())) c.classList.add("flag");
+  });
+  // kod blokları: renklendirme + dil etiketi + kopyala
+  root.querySelectorAll("pre > code").forEach((code) => {
+    const pre = code.parentElement;
+    const m = code.className.match(/language-([\w+-]+)/);
+    if (window.hljs) {
+      try { if (m && hljs.getLanguage(m[1])) hljs.highlightElement(code); } catch (e) {}
+    }
+    const box = document.createElement("div");
+    box.className = "codeblock";
+    pre.replaceWith(box);
+    box.innerHTML = `${m ? `<span class="lang-label">${esc(m[1])}</span>` : ""}<button class="copy" type="button">${u().copy}</button>`;
+    box.prepend(pre);
+    box.querySelector(".copy").onclick = (e) => {
+      navigator.clipboard && navigator.clipboard.writeText(code.textContent).then(() => {
+        e.target.textContent = u().copied;
+        setTimeout(() => (e.target.textContent = u().copy), 1500);
+      });
+    };
+  });
+}
+
+function render() {
+  const t = u();
+  $("back").textContent = t.back;
+  if (failed || !post) {
+    document.title = "404 — Doğukan Sansar";
+    $("article").innerHTML = `<div class="empty">${failed === "offline" ? t.offline : t.notFound}</div>`;
+    $("toc").innerHTML = ""; $("pager").innerHTML = "";
+    return;
+  }
+  document.title = `${meta.baslik || slug} — Doğukan Sansar`;
+  const tags = meta.etiketler || [];
+  const isCtf = meta.tur === "ctf";
+  const box = isCtf ? [[t.platform, meta.platform], [t.category, meta.kategori], [t.difficulty, meta.zorluk], [t.date, fmtDate(meta.tarih)]]
+    .filter(([, v]) => v).map(([k, v]) => `<div><small>${k}</small><span ${k === t.difficulty ? `class="diff ${esc(String(v).toLocaleLowerCase("tr"))}"` : ""}>${esc(v)}</span></div>`).join("") : "";
+
+  $("article").innerHTML = `
+    <header>
+      <div class="meta-line"><span class="badge ${isCtf ? "ctf" : "blog"}">${isCtf ? "CTF" : "Blog"}</span>
+        ${isCtf ? "" : `<span>${esc(fmtDate(meta.tarih))}</span>`}<span>${post.dakika} ${t.min}</span></div>
+      <h1>${esc(meta.baslik || slug)}</h1>
+      ${meta.ozet ? `<p class="sub">${esc(meta.ozet)}</p>` : ""}
+      ${box ? `<div class="ctf-box">${box}</div>` : ""}
+      ${tags.length ? `<div class="tags">${tags.map((x) => `<a class="tag" href="yazilar.html?etiket=${encodeURIComponent(x)}">#${esc(x)}</a>`).join("")}</div>` : ""}
+    </header>
+    <div class="prose" id="prose"></div>`;
+  const prose = $("prose");
+  prose.innerHTML = html;
+  enhance(prose);
+
+  const heads = [...prose.querySelectorAll("h2, h3")];
+  $("toc").innerHTML = heads.length > 1
+    ? `<h4>${t.toc}</h4>` + heads.map((h) => `<a href="#${h.id}" class="${h.tagName.toLowerCase()}">${esc(h.textContent)}</a>`).join("")
+    : "";
+  $("toc").querySelectorAll("a").forEach((a) => (a.onclick = (e) => {
+    e.preventDefault();
+    const h = document.getElementById(a.getAttribute("href").slice(1));
+    scrollTo({ top: h.getBoundingClientRect().top + scrollY - 70 });
+  }));
+
+  const i = list.findIndex((p) => p.slug === slug);
+  const newer = list[i - 1], older = list[i + 1];
+  $("pager").innerHTML =
+    (older ? `<a href="yazi.html?y=${encodeURIComponent(older.slug)}"><small>${t.prev}</small>${esc(older.baslik)}</a>` : "") +
+    (newer ? `<a class="next" href="yazi.html?y=${encodeURIComponent(newer.slug)}"><small>${t.next}</small>${esc(newer.baslik)}</a>` : "");
+}
+
+// Okunan bölümü içindekiler listesinde işaretle
+addEventListener("scroll", () => {
+  let cur = null;
+  document.querySelectorAll("#prose h2, #prose h3").forEach((h) => { if (h.getBoundingClientRect().top < 120) cur = h.id; });
+  document.querySelectorAll("#toc a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + cur));
+}, { passive: true });
+
+mountChrome(render);
+
+(async () => {
+  if (!/^[\w.-]+$/.test(slug)) { render(); return; }
+  try {
+    const [r, l] = await Promise.all([fetch(`yazilar/${slug}.md`, { cache: "no-cache" }), loadList().catch(() => [])]);
+    list = l;
+    if (!r.ok) { render(); return; }
+    const parsed = parseFrontMatter(await r.text());
+    meta = parsed.meta;
+    const words = parsed.body.split(/\s+/).filter(Boolean).length;
+    post = { dakika: Math.max(1, Math.round(words / 200)) };
+    const raw = window.marked ? marked.parse(parsed.body, { gfm: true }) : `<pre>${esc(parsed.body)}</pre>`;
+    html = window.DOMPurify ? DOMPurify.sanitize(raw) : raw;
+  } catch (e) {
+    failed = "offline";
+  }
+  render();
+})();
+</script>
+</body>
+</html>

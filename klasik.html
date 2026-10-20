@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doğukan Sansar — Junior Pentester</title>
+<meta name="description" content="Doğukan Sansar — junior pentester. Özgeçmiş / resume.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e14;
+    --bg-2: #11151d;
+    --card: #141922;
+    --border: #232a36;
+    --text: #d6dbe4;
+    --muted: #8590a2;
+    --accent: #4ade80;
+    --accent-2: #38bdf8;
+    --warn: #fbbf24;
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--sans); font-size: 16px; line-height: 1.65;
+    background-image: radial-gradient(circle at 1px 1px, #1a2030 1px, transparent 0);
+    background-size: 28px 28px;
+  }
+  a { color: var(--accent-2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  button { font: inherit; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+  /* Nav */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(11,14,20,.85); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 12px; }
+  .logo { font-family: var(--mono); font-weight: 700; color: var(--text); white-space: nowrap; }
+  .logo span { color: var(--accent); }
+  .links { display: flex; gap: 20px; font-family: var(--mono); font-size: 13px; }
+  .links a { color: var(--muted); }
+  .links a:hover, .links a.active { color: var(--accent); text-decoration: none; }
+  .links a::before { content: "./"; color: var(--accent); opacity: .6; }
+  .nav-right { display: flex; gap: 8px; align-items: center; }
+  .lang, .switch {
+    font-family: var(--mono); font-size: 12px; background: var(--card); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; cursor: pointer; white-space: nowrap;
+  }
+  .lang:hover, .switch:hover { border-color: var(--accent); text-decoration: none; }
+  .lang b { color: var(--accent); }
+  @media (max-width: 720px) { .links { display: none; } .switch, .lang { padding: 5px 8px; font-size: 11px; } }
+
+  /* Hero */
+  header.hero { padding: 88px 0 56px; }
+  .terminal {
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  .term-bar { display: flex; gap: 7px; padding: 11px 14px; border-bottom: 1px solid var(--border); align-items: center; }
+  .term-bar i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .term-bar i:nth-child(1) { background: #f87171; }
+  .term-bar i:nth-child(2) { background: var(--warn); }
+  .term-bar i:nth-child(3) { background: var(--accent); }
+  .term-bar small { margin-left: 8px; font-family: var(--mono); color: var(--muted); font-size: 12px; }
+  .term-body { padding: 28px 26px 32px; font-family: var(--mono); }
+  .prompt { color: var(--accent); }
+  .cmd { color: var(--text); }
+  h1 { font-family: var(--sans); font-size: clamp(34px, 6vw, 54px); line-height: 1.1; margin: 18px 0 6px; letter-spacing: -0.02em; }
+  .role { color: var(--accent-2); font-size: clamp(15px, 2.4vw, 19px); min-height: 1.6em; }
+  .cursor { display: inline-block; width: 9px; background: var(--accent); animation: blink 1s steps(1) infinite; margin-left: 2px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .summary { font-family: var(--sans); color: var(--muted); max-width: 640px; margin: 18px 0 0; }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .btn {
+    font-family: var(--mono); font-size: 13px; padding: 9px 16px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); color: var(--text); background: var(--card); display: inline-block;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+  .btn.primary { background: var(--accent); color: #06260f; border-color: var(--accent); font-weight: 700; }
+  .btn.primary:hover { filter: brightness(1.1); color: #06260f; }
+
+  /* Sections */
+  section { padding: 48px 0; scroll-margin-top: 64px; }
+  h2 {
+    font-family: var(--mono); font-size: 20px; margin: 0 0 28px; display: flex; align-items: center; gap: 12px;
+  }
+  h2 .num { color: var(--accent); font-weight: 400; }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: var(--border); }
+  .item { position: relative; margin-bottom: 28px; }
+  .item::before {
+    content: ""; position: absolute; left: -26px; top: 7px; width: 11px; height: 11px;
+    border-radius: 50%; background: var(--bg); border: 2px solid var(--accent);
+  }
+  .item-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; }
+  .item h3 { margin: 0; font-size: 17px; }
+  .item h3 .at { color: var(--accent-2); font-weight: 500; }
+  .date { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  .item ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+  .item li { margin: 3px 0; }
+  .item li::marker { color: var(--accent); content: "▹  "; }
+
+  /* Projects */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+    display: flex; flex-direction: column; transition: transform .2s, border-color .2s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .card h3 { margin: 0 0 8px; font-size: 16px; }
+  .card p { margin: 0 0 14px; color: var(--muted); font-size: 14.5px; flex: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-family: var(--mono); font-size: 11.5px; color: var(--accent); background: rgba(74,222,128,.08); padding: 2px 8px; border-radius: 4px; }
+  .card a.more { font-family: var(--mono); font-size: 12.5px; margin-top: 12px; }
+
+  /* Skills */
+  .skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .skill-group { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .skill-group h3 { font-family: var(--mono); font-size: 13px; color: var(--accent-2); margin: 0 0 12px; font-weight: 500; }
+  .skill-group .tags .tag { color: var(--text); background: var(--bg-2); border: 1px solid var(--border); }
+
+  /* Contact */
+  .contact { text-align: center; padding: 64px 0 80px; }
+  .contact p { color: var(--muted); max-width: 520px; margin: 0 auto 26px; }
+  .socials { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .copied { font-family: var(--mono); font-size: 12px; color: var(--accent); min-height: 1.4em; margin-top: 10px; }
+  footer { border-top: 1px solid var(--border); padding: 22px 0; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  /* Reveal */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s, transform .6s; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .cursor { animation: none; }
+  }
+
+  /* Print → clean paper CV */
+  @media print {
+    body { background: #fff; color: #000; }
+    nav, .cta, .term-bar, .cursor, footer, .socials { display: none !important; }
+    .terminal, .card, .skill-group { box-shadow: none; background: #fff; border-color: #ccc; }
+    .reveal { opacity: 1; transform: none; }
+    .summary, .item ul, .card p { color: #333; }
+    header.hero { padding: 0; }
+    section { padding: 16px 0; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">~/<span id="logo-name"></span></a>
+    <div class="links" id="nav-links"></div>
+    <div class="nav-right">
+      <a class="switch" href="yazilar.html" id="posts-link"></a>
+      <a class="switch" href="index.html" id="switch-link"></a>
+      <button class="lang" id="lang-btn" aria-label="Dil değiştir / Switch language"></button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+  <header class="hero">
+    <div class="terminal">
+      <div class="term-bar"><i></i><i></i><i></i><small>whoami.sh</small></div>
+      <div class="term-body">
+        <div><span class="prompt">$</span> <span class="cmd">whoami</span></div>
+        <h1 id="name"></h1>
+        <div class="role"><span id="role"></span><span class="cursor">&nbsp;</span></div>
+        <p class="summary" id="summary"></p>
+        <div class="cta" id="cta"></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="experience" class="reveal">
+    <h2><span class="num">01.</span><span data-t="experience"></span></h2>
+    <div class="timeline" id="experience-list"></div>
+  </section>
+
+  <section id="projects" class="reveal">
+    <h2><span class="num">02.</span><span data-t="projects"></span></h2>
+    <div class="grid" id="project-list"></div>
+  </section>
+
+  <section id="skills" class="reveal">
+    <h2><span class="num">03.</span><span data-t="skills"></span></h2>
+    <div class="skills" id="skill-list"></div>
+  </section>
+
+  <section id="education" class="reveal">
+    <h2><span class="num">04.</span><span data-t="education"></span></h2>
+    <div class="timeline" id="education-list"></div>
+  </section>
+
+  <section id="contact" class="contact reveal">
+    <h2><span class="num">05.</span><span data-t="contact"></span></h2>
+    <p id="contact-text"></p>
+    <a class="btn primary" id="mail-btn"></a>
+    <div class="copied" id="copied" aria-live="polite"></div>
+    <div class="socials" id="socials"></div>
+  </section>
+</main>
+
+<footer><span id="footer"></span></footer>
+
+<script>
+/* =====================================================================
+   İÇERİK — Siteyi güncellemek için sadece bu bölümü düzenlemen yeterli.
+   CONTENT — edit only this block to update the site.
+   ===================================================================== */
+const CONTENT = {
+  name: "Doğukan Sansar",
+  email: "talhadogukansansar@gmail.com",
+  cvPdf: "",                           // örn. "cv.pdf" — boş bırakılırsa "Yazdır / PDF" butonu çıkar
+  socials: [
+    { label: "GitHub",   url: "https://github.com/Edogusss" },
+    { label: "LinkedIn", url: "https://www.linkedin.com/in/do%C4%9Fukan-sansar-b55b90273" },
+  ],
+  tr: {
+    roles: ["Junior Pentester", "Lise Öğrencisi", "Araç Geliştirici"],
+    summary: "Lise öğrencisiyim ve 2 yılı aşkın süredir ForDefence'ta junior pentester olarak çalışıyorum. Sızma testleri ve phishing farkındalık simülasyonları yapıyor, boş zamanlarımda kendi güvenlik ve yapay zekâ araçlarımı geliştiriyorum.",
+    experience: [
+      { title: "Junior Pentester", org: "ForDefence", date: "May 2024 — Günümüz",
+        points: ["Web uygulamaları ve ağ altyapıları için sızma testleri", "Bulguların raporlanması ve çözüm önerileri",
+                 "Kurumlar için phishing farkındalık simülasyonları", "Kendi kurduğum test laboratuvarını ekip içi pratik için paylaşma"] },
+    ],
+    projects: [
+      { title: "Orbit", desc: "Kendi sunucumda çalışan, WhatsApp ve Telegram üzerinden konuşan, sesle uyanan ve sesimden beni tanıyan yapay zekâ asistanı. Takvim, mail, hatırlatma ve toplantı notlarını tek yerde topluyor.",
+        tags: ["Python", "FastAPI", "Next.js", "Ollama", "Docker"], url: "yazi.html?y=orbit" },
+      { title: "Pentest Test Labı", desc: "Farklı zorluk seviyelerinde 4 test makinesi ve bir Active Directory laboratuvarından oluşan kendi test ortamım. Önce kendim için kurdum, herkesin işine yarayacağını fark edince ekip arkadaşlarımla paylaştım.",
+        tags: ["Sızma Testi", "Active Directory", "Linux"], url: "" },
+      { title: "XSS Akademi", desc: "Kendi öğrenimim için yaptığım, teori ve uygulamayı birleştiren, seviye seviye ilerleyen bir XSS eğitim platformu. Her seviyede açıklama, savunmasız kod örneği, ipucu ve çözüm var.",
+        tags: ["Web Güvenliği", "Node.js", "Express"], url: "" },
+      { title: "Bu site", desc: "Kariyerimi canlı bir ağ olarak gösteren etkileşimli özgeçmiş; CTF çözümlerim ve blog yazılarım için ayrı bir bölümü var.",
+        tags: ["JavaScript", "Canvas"], url: "index.html" },
+    ],
+    skills: [
+      { group: "Güvenlik", items: ["Sızma Testi", "Web Güvenliği", "Active Directory", "Phishing Simülasyonu", "Pentest Raporlama"] },
+      { group: "Araçlar", items: ["Nmap", "Kali Linux", "Linux", "Docker"] },
+      { group: "Yazılım", items: ["Python", "FastAPI", "JavaScript", "TypeScript", "Next.js", "Node.js", "PostgreSQL", "Redis"] },
+      { group: "Yapay Zekâ", items: ["Yerel LLM (Ollama)", "Ses Tanıma (Whisper, Vosk)"] },
+      { group: "Yabancı Dil", items: ["Türkçe (Ana dil)", "İngilizce (C1)", "Almanca (B2)"] },
+    ],
+    education: [
+      { title: "Lise Öğrenimi", org: "", date: "Devam ediyor", points: ["Okulla birlikte profesyonel olarak siber güvenlik alanında çalışıyorum."] },
+    ],
+    contactText: "Sızma testi, güvenlik eğitimi ya da birlikte bir proje için yazabilirsin.",
+  },
+  en: {
+    roles: ["Junior Penetration Tester", "High School Student", "Tool Builder"],
+    summary: "I'm a high school student and have been working as a junior penetration tester at ForDefence for over two years. I run penetration tests and phishing awareness simulations, and in my spare time I build my own security and AI tools.",
+    experience: [
+      { title: "Junior Penetration Tester", org: "ForDefence", date: "May 2024 — Present",
+        points: ["Penetration tests for web applications and network infrastructure", "Reporting findings with remediation advice",
+                 "Phishing awareness simulations for organisations", "Sharing my own test lab with the team for hands-on practice"] },
+    ],
+    projects: [
+      { title: "Orbit", desc: "A self-hosted AI assistant that talks over WhatsApp and Telegram, wakes up by voice and recognises me by my voice. It brings calendar, mail, reminders and meeting notes together.",
+        tags: ["Python", "FastAPI", "Next.js", "Ollama", "Docker"], url: "yazi.html?y=orbit" },
+      { title: "Pentest Test Lab", desc: "My own test environment: 4 test machines of varying difficulty plus an Active Directory lab. I built it for myself first, then shared it with my teammates once I saw how useful it was.",
+        tags: ["Penetration Testing", "Active Directory", "Linux"], url: "" },
+      { title: "XSS Academy", desc: "A level-based XSS training platform I built for my own learning, combining theory and practice. Each level has an explanation, vulnerable code sample, hint and solution.",
+        tags: ["Web Security", "Node.js", "Express"], url: "" },
+      { title: "This site", desc: "An interactive resume showing my career as a living network, with a section for my CTF write-ups and blog posts.",
+        tags: ["JavaScript", "Canvas"], url: "index.html" },
+    ],
+    skills: [
+      { group: "Security", items: ["Penetration Testing", "Web Security", "Active Directory", "Phishing Simulation", "Pentest Reporting"] },
+      { group: "Tools", items: ["Nmap", "Kali Linux", "Linux", "Docker"] },
+      { group: "Development", items: ["Python", "FastAPI", "JavaScript", "TypeScript", "Next.js", "Node.js", "PostgreSQL", "Redis"] },
+      { group: "AI", items: ["Local LLMs (Ollama)", "Speech (Whisper, Vosk)"] },
+      { group: "Languages", items: ["Turkish (Native)", "English (C1)", "German (B2)"] },
+    ],
+    education: [
+      { title: "High School", org: "", date: "In progress", points: ["Working professionally in cyber security alongside school."] },
+    ],
+    contactText: "Reach out for penetration testing, security training or a project together.",
+  },
+};
+
+/* Arayüz metinleri / UI strings */
+const UI = {
+  tr: { experience: "Deneyim", projects: "Projeler", skills: "Yetenekler", education: "Eğitim", contact: "İletişim",
+        at: "@", contactMe: "İletişime geç", downloadCv: "CV indir (PDF)", print: "Yazdır / PDF", view: "İncele →",
+        built: "ile yapıldı", copied: "E-posta panoya kopyalandı ✓", switchTo: "◉ Ağ görünümü", posts: "✎ CTF & Blog" },
+  en: { experience: "Experience", projects: "Projects", skills: "Skills", education: "Education", contact: "Contact",
+        at: "@", contactMe: "Get in touch", downloadCv: "Download CV (PDF)", print: "Print / PDF", view: "View →",
+        built: "built with", copied: "Email copied to clipboard ✓", switchTo: "◉ Network view", posts: "✎ CTF & Blog" },
+};
+
+/* ===================== Render ===================== */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+let lang = null;
+try { lang = localStorage.getItem("lang"); } catch (e) {}
+if (lang !== "tr" && lang !== "en") lang = (navigator.language || "tr").toLowerCase().startsWith("en") ? "en" : "tr";
+
+let typeTimer;
+function typeRoles(roles) {
+  clearTimeout(typeTimer);
+  const el = $("role");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = roles.join(" · "); return; }
+  let r = 0, i = 0, del = false;
+  (function tick() {
+    const word = roles[r];
+    el.textContent = word.slice(0, i);
+    if (!del && i < word.length) i++;
+    else if (!del) { del = true; typeTimer = setTimeout(tick, 1600); return; }
+    else if (i > 0) i--;
+    else { del = false; r = (r + 1) % roles.length; }
+    typeTimer = setTimeout(tick, del ? 40 : 85);
+  })();
+}
+
+function timeline(list) {
+  return list.map((x) => `
+    <div class="item">
+      <div class="item-head">
+        <h3>${esc(x.title)}${x.org ? ` <span class="at">${UI[lang].at} ${esc(x.org)}</span>` : ""}</h3>
+        <span class="date">${esc(x.date)}</span>
+      </div>
+      ${x.points && x.points.length ? `<ul>${x.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+    </div>`).join("");
+}
+
+const socialLinks = () => CONTENT.socials
+  .map((s) => `<a class="btn" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)} ↗</a>`).join("");
+
+function render() {
+  const c = CONTENT[lang], u = UI[lang];
+  document.documentElement.lang = lang;
+  $("logo-name").textContent = CONTENT.name.split(" ")[0].toLocaleLowerCase("tr");
+  $("lang-btn").innerHTML = lang === "tr" ? "<b>TR</b> / EN" : "TR / <b>EN</b>";
+  $("switch-link").textContent = u.switchTo;
+  $("posts-link").textContent = u.posts;
+  $("nav-links").innerHTML = ["experience", "projects", "skills", "education", "contact"]
+    .map((k) => `<a href="#${k}">${u[k].toLocaleLowerCase(lang)}</a>`).join("");
+  document.querySelectorAll("[data-t]").forEach((el) => (el.textContent = u[el.dataset.t]));
+
+  $("name").textContent = CONTENT.name;
+  $("summary").textContent = c.summary;
+  $("cta").innerHTML =
+    `<a class="btn primary" href="#contact">${u.contactMe}</a>` +
+    (CONTENT.cvPdf
+      ? `<a class="btn" href="${esc(CONTENT.cvPdf)}" download>${u.downloadCv}</a>`
+      : `<button class="btn" type="button" id="print-btn">${u.print}</button>`) +
+    socialLinks();
+  const pb = $("print-btn");
+  if (pb) pb.onclick = () => window.print();
+  typeRoles(c.roles);
+
+  $("experience-list").innerHTML = timeline(c.experience);
+  $("education-list").innerHTML = timeline(c.education);
+
+  $("project-list").innerHTML = c.projects.map((p) => `
+    <div class="card">
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.desc)}</p>
+      <div class="tags">${p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+      ${p.url ? `<a class="more" href="${esc(p.url)}"${/^https?:/.test(p.url) ? " target=\"_blank\" rel=\"noopener\"" : ""}>${u.view}</a>` : ""}
+    </div>`).join("");
+
+  $("skill-list").innerHTML = c.skills.map((g) => `
+    <div class="skill-group">
+      <h3>// ${esc(g.group)}</h3>
+      <div class="tags">${g.items.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+    </div>`).join("");
+
+  $("contact-text").textContent = c.contactText;
+  $("mail-btn").textContent = CONTENT.email;
+  $("mail-btn").href = "mailto:" + CONTENT.email;
+  $("copied").textContent = "";
+  $("socials").innerHTML = socialLinks();
+  $("footer").textContent = `© ${new Date().getFullYear()} ${CONTENT.name} — HTML + CSS ${u.built} ♥`;
+}
+
+$("lang-btn").addEventListener("click", () => {
+  lang = lang === "tr" ? "en" : "tr";
+  try { localStorage.setItem("lang", lang); } catch (e) {}
+  render();
+});
+
+/* Sayfa içi bağlantılar (#deneyim vb.) her ortamda kaydırarak çalışsın.
+   In-page links scroll via JS so they work everywhere (incl. previews). */
+document.addEventListener("click", (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const id = a.getAttribute("href").slice(1);
+  const target = id === "top" ? document.body : document.getElementById(id);
+  if (!target) return;
+  e.preventDefault();
+  target.classList.add("in");
+  const navH = document.querySelector("nav").offsetHeight;
+  smoothScrollTo(id === "top" ? 0 : target.getBoundingClientRect().top + scrollY - navH - 8);
+  try { history.replaceState(null, "", "#" + id); } catch (err) {}
+});
+
+/* Zamana bağlı kaydırma: kare hızı düşse de doğru yere varır, en geç 700 ms sonra hedeftedir. */
+let scrollJob = 0;
+function smoothScrollTo(y) {
+  const job = ++scrollJob, from = scrollY, dist = y - from, dur = 550, t0 = performance.now();
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return window.scrollTo(0, y);
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  (function step(now) {
+    if (job !== scrollJob) return;
+    const t = Math.min(1, (now - t0) / dur);
+    window.scrollTo(0, from + dist * ease(t));
+    if (t < 1) requestAnimationFrame(step);
+  })(t0);
+  setTimeout(() => { if (job === scrollJob) window.scrollTo(0, y); }, dur + 150);
+}
+
+/* E-posta butonu: mail uygulaması yoksa da işe yarasın diye adresi panoya kopyala. */
+$("mail-btn").addEventListener("click", () => {
+  if (navigator.clipboard) navigator.clipboard.writeText(CONTENT.email).then(() => ($("copied").textContent = UI[lang].copied), () => {});
+});
+
+render();
+
+/* Menüde aktif bölümü vurgula */
+const sections = [...document.querySelectorAll("main section")];
+addEventListener("scroll", () => {
+  let cur = "";
+  for (const s of sections) if (s.getBoundingClientRect().top < 120) cur = s.id;
+  document.querySelectorAll("#nav-links a").forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + cur));
+}, { passive: true });
+
+const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), { threshold: 0.12 });
+document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+</script>
+</body>
+</html>

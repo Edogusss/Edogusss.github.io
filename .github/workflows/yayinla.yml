@@ -1,0 +1,45 @@
+# GitHub'a her yükleme yaptığında siteyi yayınlar.
+# Yazı listesini (yazilar/liste.json) de otomatik yeniden oluşturur,
+# böylece yeni bir .md dosyası yüklemen yeterli olur.
+#
+# Tek seferlik ayar: GitHub'da depo → Settings → Pages → Source: "GitHub Actions"
+
+name: Siteyi yayınla
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  yayinla:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Yazı listesini oluştur
+        run: node araclar/liste-olustur.js
+
+      - name: Yayınlanacak dosyaları hazırla
+        run: |
+          mkdir _site
+          rsync -a --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '_site' --exclude 'araclar' --exclude 'YAZI-EKLEME.md' ./ _site/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
