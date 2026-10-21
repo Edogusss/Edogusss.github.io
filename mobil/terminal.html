@@ -195,7 +195,7 @@ const CMDS = {
     for (const s of PROFILE.socials) await print(kv(s.label.toLowerCase(), lnk(s.url, s.url.replace(/^https?:\/\/(www\.)?/, "").replace(/%C4%9F/g, "ğ"))));
   },
   async cv() { await print(`<span class="dim">→</span> ${lnk("../klasik.html", "klasik.html")}`); location.href = "../klasik.html"; },
-  async gui() { await print(`<span class="dim">→</span> ${lnk("../index.html", "index.html")}`); location.href = "../index.html"; },
+  async gui() { await print(`<span class="dim">→</span> ${lnk("../index.html?masaustu=1", "index.html")}`); location.href = "../index.html?masaustu=1"; },
   async exit() { await print(`<span class="dim">${u().exit}</span>`); location.href = "./"; },
   async clear() { out.innerHTML = ""; },
   /* gizli komutlar */

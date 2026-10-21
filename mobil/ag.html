@@ -256,7 +256,7 @@ function render() {
       <a class="btn main" href="mailto:${esc(PROFILE.email)}">${u().mail}</a>
       ${PROFILE.socials.map((s) => `<a class="btn" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)} ↗</a>`).join("")}
       <a class="btn" href="../klasik.html">${u().cv}</a>
-      <a class="btn" href="../index.html">${u().net}</a>
+      <a class="btn" href="../index.html?masaustu=1">${u().net}</a>
     </section>
     <div class="spacer"></div>`;
   onScroll();

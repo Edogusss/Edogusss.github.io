@@ -319,7 +319,7 @@ const TOPICS = {
     const c = document.createElement("div");
     c.className = "bubble card";
     c.innerHTML = `<div class="head"><h3>${esc(PROFILE.name)}</h3><div class="sub">${esc(T(PROFILE.role))}</div></div>
-      <div class="actions">${linkBtn("../klasik.html", u().btn.classic)}${linkBtn("../index.html", u().btn.network)}</div>`;
+      <div class="actions">${linkBtn("../klasik.html", u().btn.classic)}${linkBtn("../index.html?masaustu=1", u().btn.network)}</div>`;
     await show(c, r, 500);
     return ["contact"];
   },

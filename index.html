@@ -3,6 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Telefondan dışarıdan gelen ziyaretçiyi dört mobil sürümden birine rastgele gönder.
+   Site içinden gelen (ör. "Ağ görünümü" butonu) ya da ?masaustu=1 ile açan yönlendirilmez. */
+(function () {
+  try {
+    var phone = matchMedia("(pointer: coarse)").matches && Math.min(screen.width, innerWidth) < 760;
+    var internal = document.referrer && new URL(document.referrer).origin === location.origin;
+    if (!phone || internal || /[?&]masaustu=1/.test(location.search)) return;
+    var all = ["sohbet", "hikaye", "ag", "terminal"], last = null;
+    try { last = localStorage.getItem("mobil-son"); } catch (e) {}
+    var pool = all.filter(function (v) { return v !== last; });
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    try { localStorage.setItem("mobil-son", pick); } catch (e) {}
+    location.replace("mobil/" + pick + ".html");
+  } catch (e) {}
+})();
+</script>
 <title>Doğukan Sansar — Junior Pentester</title>
 <meta name="description" content="Doğukan Sansar — junior pentester. Etkileşimli özgeçmiş, CTF çözümleri ve blog yazıları.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
