@@ -11,7 +11,7 @@ const UI = {
     empty: "Burada henüz yazı yok, ilk CTF çözümlerim yakında.", noMatch: "Aramana uyan yazı yok.",
     notFound: "Bu yazı bulunamadı.", tagFilter: "etiket:", clear: "✕ temizle",
     offline: "Yazılar yüklenemedi. Dosyayı çift tıklayarak açtıysan yazılar görünmez; siteyi bir sunucu üzerinden (GitHub Pages ya da yerel önizleme) açman gerekiyor.",
-    cv: "◉ CV", net: "◉ Ağ", built: "ile yapıldı",
+    cv: "☰ CV", net: "✦ Evren", built: "ile yapıldı",
   },
   en: {
     title: "Writing", sub: "My CTF write-ups and blog posts.",
@@ -23,7 +23,7 @@ const UI = {
     empty: "Nothing here yet, my first CTF write-ups are coming soon.", noMatch: "No posts match your search.",
     notFound: "This post could not be found.", tagFilter: "tag:", clear: "✕ clear",
     offline: "Posts could not be loaded. If you opened the file by double-clicking, posts won't show; open the site through a server (GitHub Pages or the local preview).",
-    cv: "◉ CV", net: "◉ Network", built: "built with",
+    cv: "☰ CV", net: "✦ Universe", built: "built with",
   },
 };
 
@@ -70,11 +70,11 @@ async function loadList() {
 function navHtml(active) {
   return `
   <div class="wrap">
-    <a class="logo" href="klasik.html">~/<span>doğukan</span>/yazılar</a>
+    <a class="logo" href="index.html">~/<span>doğukan</span>/yazılar</a>
     <div class="nav-right">
       <a class="switch on" href="yazilar.html">✎ CTF & Blog</a>
-      <a class="switch" href="klasik.html">${u().cv}</a>
-      <a class="switch hide-sm" href="index.html">${u().net}</a>
+      <a class="switch" href="index.html">${u().cv}</a>
+      <a class="switch hide-sm" href="evren.html">${u().net}</a>
       <button class="lang" id="lang-btn" aria-label="Dil / Language">${lang === "tr" ? "<b>TR</b> / EN" : "TR / <b>EN</b>"}</button>
     </div>
   </div>`;

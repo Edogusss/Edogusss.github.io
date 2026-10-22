@@ -1,5 +1,10 @@
-/* Mobil sürümlerin ortak verisi — index.html içindeki PROFILE ve ITEMS ile aynı.
-   (Hangi mobil sürüm seçilirse, sonra tek veri dosyasında birleştirilecek.) */
+/* =========================================================================
+   SİTENİN TÜM İÇERİĞİ — Bilgilerini güncellemek için yalnızca bu dosyayı düzenle.
+   Klasik CV (index.html), Evren görünümü (evren.html) ve mobil sürümler buradan okur.
+   Metinler { tr: "...", en: "..." } şeklinde ya da tek dilde düz yazı olabilir.
+   ITEMS içindeki her öğe Evren görünümünde bir yıldızdır; "links" ile başka öğelere bağlanır.
+   Yeteneklerin yılı otomatik hesaplanır (onu kullanan ilk öğenin yılı).
+   ========================================================================= */
 const PROFILE = {
   name: "Doğukan Sansar",
   role: { tr: "Junior Pentester", en: "Junior Penetration Tester" },
@@ -38,11 +43,11 @@ const ITEMS = [
   { id: "testlab", type: "project", year: 2025.5, title: { tr: "Pentest Test Labı", en: "Pentest Test Lab" },
     desc: { tr: "Farklı zorluk seviyelerinde 4 test makinesi ve bir Active Directory laboratuvarından oluşan kendi test ortamım. Önce kendim için kurdum, herkesin işine yarayacağını fark edince ekip arkadaşlarımla paylaştım.",
             en: "My own test environment: 4 test machines of varying difficulty plus an Active Directory lab. I built it for myself first, then shared it with my teammates once I saw how useful it was." },
-    links: ["me", "fordefence", "pentest", "ad", "linux", "kali"], url: "" },
+    links: ["me", "fordefence", "pentest", "ad", "linux", "kali"], url: "yazi.html?y=pentest-test-labi" },
   { id: "xsslab", type: "project", year: 2026.6, title: { tr: "XSS Akademi", en: "XSS Academy" },
     desc: { tr: "Kendi öğrenimim için yaptığım, teori ve uygulamayı birleştiren, seviye seviye ilerleyen bir XSS eğitim platformu. Her seviyede açıklama, savunmasız kod örneği, ipucu ve çözüm var.",
             en: "A level-based XSS training platform I built for my own learning, combining theory and practice. Each level has an explanation, vulnerable code sample, hint and solution." },
-    links: ["me", "websec", "node", "js"], url: "" },
+    links: ["me", "websec", "node", "js"], url: "yazi.html?y=xss-akademi" },
   { id: "orbit", type: "project", year: 2026.53, title: "Orbit",
     desc: { tr: "Kendi sunucumda çalışan, WhatsApp ve Telegram üzerinden konuşan, sesle uyanan ve sesimden beni tanıyan yapay zekâ asistanı. Takvim, mail, hatırlatma ve toplantı notlarını tek yerde topluyor.",
             en: "A self-hosted AI assistant that talks over WhatsApp and Telegram, wakes up by voice and recognises me by my voice. It brings calendar, mail, reminders and meeting notes together." },
@@ -50,7 +55,12 @@ const ITEMS = [
   { id: "site", type: "project", year: 2026.8, title: { tr: "Bu site", en: "This site" },
     desc: { tr: "Kariyerimi canlı bir ağ olarak gösteren etkileşimli özgeçmiş; CTF çözümlerim ve blog yazılarım için ayrı bir bölümü var.",
             en: "An interactive resume showing my career as a living network, with a section for my CTF write-ups and blog posts." },
-    links: ["me", "js"], url: "" },
+    links: ["me", "js"], url: "yazi.html?y=bu-site" },
+  { id: "reconsuite", type: "project", year: 2026.72, title: "ReconSuite",
+    with: { name: "Mert Ergün", url: "https://github.com/Mert305" },
+    desc: { tr: "Mert Ergün ile birlikte geliştirdiğimiz, bug bounty ve sızma testi sırasında keşiften rapora kadar yardımcı olan bir Chrome eklentisi. Aktif testler yalnızca kapsam listesindeki hedeflerde ve açık onayla çalışıyor.",
+            en: "A Chrome extension we built with Mert Ergün that helps during bug bounty and penetration testing, from recon to reporting. Active tests only run on in-scope targets with explicit consent." },
+    links: ["me", "websec", "pentest", "js", "chromeext", "reporting"], url: "yazi.html?y=reconsuite" },
 
   // ---- Yetenekler / Skills  (yılı otomatik)
   { id: "pentest", type: "skill", title: { tr: "Sızma Testi", en: "Penetration Testing" }, group: "sec" },
@@ -68,6 +78,7 @@ const ITEMS = [
   { id: "ts", type: "skill", title: "TypeScript", group: "dev" },
   { id: "nextjs", type: "skill", title: "Next.js", group: "dev" },
   { id: "node", type: "skill", title: "Node.js", group: "dev" },
+  { id: "chromeext", type: "skill", title: { tr: "Chrome Eklentisi (MV3)", en: "Chrome Extensions (MV3)" }, group: "dev" },
   { id: "postgres", type: "skill", title: "PostgreSQL", group: "dev" },
   { id: "redis", type: "skill", title: "Redis", group: "dev" },
   { id: "llm", type: "skill", title: { tr: "Yerel LLM (Ollama)", en: "Local LLMs (Ollama)" }, group: "ai" },
@@ -84,9 +95,16 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const byId = Object.fromEntries(ITEMS.map((x) => [x.id, x]));
 const ofType = (t) => ITEMS.filter((x) => x.type === t);
 const skillsOf = (item) => (item.links || []).map((l) => byId[l]).filter((x) => x && x.type === "skill");
+// Ortak geliştirici etiketi: "Mert Ergün ile" (profil bağlantılı)
+const withHtml = (x) => {
+  if (!x.with) return "";
+  const a = `<a href="${esc(x.with.url)}" target="_blank" rel="noopener">${esc(x.with.name)}</a>`;
+  return lang === "tr" ? `${a} ile` : `with ${a}`;
+};
 const SKILL_GROUPS = { sec: { tr: "Güvenlik", en: "Security" }, tool: { tr: "Araçlar", en: "Tools" }, dev: { tr: "Yazılım", en: "Development" }, ai: { tr: "Yapay Zekâ", en: "AI" } };
-// Site kökündeki sayfalara giden bağlantıyı mobil klasöründen çalışır hâle getirir
-const rootUrl = (u) => (!u || /^(https?:|mailto:|\.\.\/|\/)/.test(u) ? u : "../" + u);
+// Sayfa mobil/ klasöründeyse site köküne giden bağlantıların başına ../ eklenir
+const BASE = /\/mobil\//.test(location.pathname) ? "../" : "";
+const rootUrl = (u) => (!u || /^(https?:|mailto:|\.\.\/|\/|#)/.test(u) ? u : BASE + u);
 async function loadPosts() {
-  try { const r = await fetch("../yazilar/liste.json", { cache: "no-cache" }); return r.ok ? await r.json() : []; } catch (e) { return []; }
+  try { const r = await fetch(BASE + "yazilar/liste.json", { cache: "no-cache" }); return r.ok ? await r.json() : []; } catch (e) { return []; }
 }

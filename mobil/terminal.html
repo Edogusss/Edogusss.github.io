@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<meta name="theme-color" content="#030604">
+<meta name="theme-color" content="#070d18">
 <title>Doğukan Sansar — Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg: #030604; --bar: #0a110c; --g: #4ade80; --g2: #86efac; --dim: #5b7a64; --text: #d7f5df; --c: #38bdf8; --y: #fbbf24; --r: #f87171; --p: #c084fc;
+  :root { --bg: #070d18; --bar: #0b1424; --g: #ffb347; --g2: #ffd29a; --dim: #7d8aa3; --text: #f3e6d3; --c: #8cbcff; --y: #e6bf8a; --r: #ff8a6b; --p: #c98b5e;
           --mono: "JetBrains Mono", ui-monospace, Consolas, monospace; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--mono); }
@@ -19,12 +19,12 @@
   button, input { font: inherit; color: inherit; }
   a { color: var(--c); }
 
-  header { display: flex; align-items: center; gap: 8px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; background: var(--bar); border-bottom: 1px solid #14301d; font-size: 12px; color: var(--dim); flex-shrink: 0; }
+  header { display: flex; align-items: center; gap: 8px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; background: var(--bar); border-bottom: 1px solid #1d2f4a; font-size: 12px; color: var(--dim); flex-shrink: 0; }
   header .dots { display: flex; gap: 6px; }
   header .dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
-  header .dots a:nth-child(1) i { background: #f87171; } header .dots i:nth-child(2) { background: #fbbf24; } header .dots i:nth-child(3) { background: var(--g); }
+  header .dots a:nth-child(1) i { background: #ff8a6b; } header .dots i:nth-child(2) { background: #e6bf8a; } header .dots i:nth-child(3) { background: var(--g); }
   header .title { flex: 1; text-align: center; }
-  .lang { background: none; border: 1px solid #1d3a26; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--dim); }
+  .lang { background: none; border: 1px solid #2a3d5c; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--dim); }
   .lang b { color: var(--g); }
 
   #out { flex: 1; overflow-y: auto; padding: 12px 12px 6px; font-size: 13.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; overscroll-behavior: contain; }
@@ -32,25 +32,25 @@
   .pr { color: var(--g); } .pr .path { color: var(--c); }
   .dim { color: var(--dim); } .g { color: var(--g); } .g2 { color: var(--g2); } .c { color: var(--c); } .y { color: var(--y); } .r { color: var(--r); } .p { color: var(--p); }
   .b { font-weight: 700; }
-  .ascii { color: var(--g); font-size: clamp(6px, 2.35vw, 11px); line-height: 1.15; text-shadow: 0 0 8px rgba(74,222,128,.5); }
-  .glow { text-shadow: 0 0 10px rgba(74,222,128,.55); }
+  .ascii { color: var(--g); font-size: clamp(6px, 2.35vw, 11px); line-height: 1.15; text-shadow: 0 0 8px rgba(255,179,71,.5); }
+  .glow { text-shadow: 0 0 10px rgba(255,179,71,.55); }
   #out a { text-decoration: underline; }
   .cursor { display: inline-block; width: .6em; background: var(--g); animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
 
-  footer { background: var(--bar); border-top: 1px solid #14301d; flex-shrink: 0; padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); }
+  footer { background: var(--bar); border-top: 1px solid #1d2f4a; flex-shrink: 0; padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); }
   .keys { display: flex; gap: 6px; overflow-x: auto; padding: 0 10px 8px; scrollbar-width: none; }
   .keys::-webkit-scrollbar { display: none; }
-  .key { flex-shrink: 0; padding: 8px 11px; border-radius: 7px; border: 1px solid #1d3a26; background: #0d1a11; color: var(--g2); font-size: 12.5px; cursor: pointer; white-space: nowrap; }
-  .key:active { background: #163020; }
-  .key.alt { color: var(--y); border-color: #3a3214; background: #17140a; }
+  .key { flex-shrink: 0; padding: 8px 11px; border-radius: 7px; border: 1px solid #2a3d5c; background: #101c30; color: var(--g2); font-size: 12.5px; cursor: pointer; white-space: nowrap; }
+  .key:active { background: #1a2b46; }
+  .key.alt { color: var(--y); border-color: #4a3420; background: #1e160d; }
   form { display: flex; align-items: center; gap: 8px; padding: 0 12px; }
   form .pr { flex-shrink: 0; font-size: 13.5px; }
   form input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; font-size: 16px; color: var(--text); caret-color: var(--g); padding: 6px 0; }
-  form input::placeholder { color: #2f4a37; }
+  form input::placeholder { color: #3a4a66; }
 
   #matrix { position: fixed; inset: 0; z-index: 8; display: none; }
-  @media (min-width: 700px) { body { max-width: 640px; margin: 0 auto; border-left: 1px solid #14301d; border-right: 1px solid #14301d; } }
+  @media (min-width: 700px) { body { max-width: 640px; margin: 0 auto; border-left: 1px solid #1d2f4a; border-right: 1px solid #1d2f4a; } }
   @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
 </style>
 </head>
@@ -80,7 +80,7 @@ const UI = {
     clear: "ekranı temizler", desc: {
       whoami: "ben kimim", about: "kısa tanıtım", experience: "iş deneyimi", projects: "projeler", cat: "bir projeyi aç (örn. cat orbit)",
       skills: "yetenekler", languages: "konuştuğum diller", education: "eğitim", posts: "CTF & blog yazıları", contact: "iletişim",
-      cv: "klasik CV'yi aç", gui: "masaüstü sürümü aç", exit: "sürüm seçimine dön", help: "bu liste" },
+      cv: "klasik CV'yi aç", gui: "evren görünümünü aç", exit: "sürüm seçimine dön", help: "bu liste" },
     labels: { role: "rol", status: "durum", location: "konum", student: "lise öğrencisi + çalışıyor", web: "web" },
   },
   en: {
@@ -93,7 +93,7 @@ const UI = {
     clear: "clear the screen", desc: {
       whoami: "who am I", about: "short intro", experience: "work experience", projects: "projects", cat: "open a project (e.g. cat orbit)",
       skills: "skills", languages: "languages I speak", education: "education", posts: "CTF & blog posts", contact: "contact",
-      cv: "open the classic CV", gui: "open the desktop version", exit: "back to versions", help: "this list" },
+      cv: "open the classic CV", gui: "open the universe view", exit: "back to versions", help: "this list" },
     labels: { role: "role", status: "status", location: "location", student: "high school student + working", web: "web" },
   },
 };
@@ -165,6 +165,7 @@ const CMDS = {
       return;
     }
     await print(`<span class="c b"># ${esc(T(p.title))}</span>  <span class="dim">(${Math.floor(p.year)})</span>`);
+    if (p.with) await print(`<span class="dim">${lang === "tr" ? "birlikte" : "with"}:</span> ${lnk(p.with.url, p.with.name + " (@" + p.with.url.split("/").pop() + ")")}`);
     await print(esc(T(p.desc)));
     await print(`<span class="dim">stack:</span> <span class="g2">${skillsOf(p).map((k) => esc(T(k.title))).join(", ")}</span>`);
     if (p.url) await print(`<span class="dim">→</span> ${lnk(rootUrl(p.url), p.id === "orbit" ? (lang === "tr" ? "yazının tamamını oku" : "read the full post") : (lang === "tr" ? "aç" : "open"))}`);
@@ -194,8 +195,8 @@ const CMDS = {
     await print(kv("email", lnk("mailto:" + PROFILE.email, PROFILE.email)));
     for (const s of PROFILE.socials) await print(kv(s.label.toLowerCase(), lnk(s.url, s.url.replace(/^https?:\/\/(www\.)?/, "").replace(/%C4%9F/g, "ğ"))));
   },
-  async cv() { await print(`<span class="dim">→</span> ${lnk("../klasik.html", "klasik.html")}`); location.href = "../klasik.html"; },
-  async gui() { await print(`<span class="dim">→</span> ${lnk("../index.html?masaustu=1", "index.html")}`); location.href = "../index.html?masaustu=1"; },
+  async cv() { await print(`<span class="dim">→</span> ${lnk("../index.html?masaustu=1", "index.html")}`); location.href = "../index.html?masaustu=1"; },
+  async gui() { await print(`<span class="dim">→</span> ${lnk("../evren.html", "evren.html")}`); location.href = "../evren.html"; },
   async exit() { await print(`<span class="dim">${u().exit}</span>`); location.href = "./"; },
   async clear() { out.innerHTML = ""; },
   /* gizli komutlar */
@@ -254,8 +255,8 @@ async function matrixRain() {
   const end = performance.now() + 3200;
   await new Promise((res) => {
     (function f(t) {
-      x.fillStyle = "rgba(3,6,4,.12)"; x.fillRect(0, 0, c.width, c.height);
-      x.fillStyle = "#4ade80"; x.font = "14px JetBrains Mono, monospace";
+      x.fillStyle = "rgba(7,13,24,.12)"; x.fillRect(0, 0, c.width, c.height);
+      x.fillStyle = "#ffb347"; x.font = "14px JetBrains Mono, monospace";
       drops.forEach((y, i) => { x.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, y * 14); drops[i] = y * 14 > c.height && Math.random() > .97 ? 0 : y + 1; });
       if (t < end) requestAnimationFrame(f); else res();
     })(performance.now());

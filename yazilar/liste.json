@@ -1,5 +1,39 @@
 [
   {
+    "slug": "yapay-zekadan-korkmali-miyiz",
+    "baslik": "Yapay Zekâdan Korkmalı mıyız, Yoksa Sınırlarını mı Sorgulamalıyız?",
+    "tarih": "2026-10-21",
+    "tur": "blog",
+    "ozet": "2026'nın \"kontrolden çıkan yapay zekâ\" haberlerine, siber güvenlik tarafında çalışan biri olarak biraz daha yakından bakış. Panik gereksiz, dikkat şart.",
+    "etiketler": [
+      "yapay-zeka",
+      "siber-güvenlik",
+      "ajanlar",
+      "güvenlik"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 8
+  },
+  {
+    "slug": "bu-site",
+    "baslik": "Bu siteyi nasıl yaptım?",
+    "tarih": "2026-10-20",
+    "tur": "blog",
+    "ozet": "Özgeçmişimi klasik bir CV, kariyerimi canlı bir evren ağı ve telefona özel dört farklı deneyim olarak gösteren bu sitenin arkasındaki fikirler.",
+    "etiketler": [
+      "web",
+      "javascript",
+      "canvas",
+      "tasarım"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 1
+  },
+  {
     "slug": "orbit",
     "baslik": "Orbit: Kendi yapay zekâ asistanımı neden ve nasıl yaptım?",
     "tarih": "2026-10-20",
@@ -15,5 +49,127 @@
     "kategori": "",
     "zorluk": "",
     "dakika": 3
+  },
+  {
+    "slug": "reconsuite",
+    "baslik": "ReconSuite: Tarayıcıdan çıkmadan keşiften rapora",
+    "tarih": "2026-09-30",
+    "tur": "blog",
+    "ozet": "Mert Ergün ile birlikte geliştirdiğimiz, bug bounty ve sızma testi sırasında keşiften rapora kadar yardımcı olan Chrome eklentisi. Neden yaptık, ne yapıyor ve güvenliği nasıl kurguladık.",
+    "etiketler": [
+      "reconsuite",
+      "web-güvenliği",
+      "bug-bounty",
+      "chrome-eklentisi"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 2
+  },
+  {
+    "slug": "xss-akademi",
+    "baslik": "XSS Akademi: XSS'i seviye seviye öğrenmek için yaptığım lab",
+    "tarih": "2026-08-31",
+    "tur": "blog",
+    "ozet": "Kendi öğrenimim için yaptığım, teoriyi ve uygulamayı birleştiren, 12 seviyelik bir XSS eğitim platformu. Her seviyede açıklama, savunmasız bir kod örneği, ipucu ve çözüm var.",
+    "etiketler": [
+      "web-güvenliği",
+      "xss",
+      "node.js",
+      "kendi-kendine-öğrenme"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 1
+  },
+  {
+    "slug": "firewall-varken-pentest",
+    "baslik": "Firewall Varken Pentest'e Gerek Var mı?",
+    "tarih": "2026-07-22",
+    "tur": "blog",
+    "ozet": "Güçlü bir firewall'umuz var, pentest'e ne gerek var?\" Sık duyulan bu sorunun arkasındaki kör noktayı, firewall'un ne yapıp ne yapmadığını ve ikisinin neden birbirini tamamladığını anlatıyorum.",
+    "etiketler": [
+      "pentest",
+      "firewall",
+      "güvenlik",
+      "kvkk",
+      "iso-27001"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 4
+  },
+  {
+    "slug": "htb-cap",
+    "baslik": "HackTheBox: Cap Çözümü",
+    "tarih": "2026-07-17",
+    "tur": "ctf",
+    "ozet": "IDOR ile başka kullanıcıların pcap dosyalarına erişip FTP kimlik bilgilerini açık metinden okuma, aynı parolayla SSH ve Linux capability ile root. Adım adım çözüm.",
+    "etiketler": [
+      "hackthebox",
+      "linux",
+      "idor",
+      "wireshark",
+      "privesc"
+    ],
+    "platform": "HackTheBox",
+    "kategori": "Linux",
+    "zorluk": "Kolay",
+    "dakika": 2
+  },
+  {
+    "slug": "adim-adim-phishing",
+    "baslik": "Phishing Adım Adım Nasıl İlerler?",
+    "tarih": "2026-07-17",
+    "tur": "blog",
+    "ozet": "Phishing nedir, kurumsal ve kişisel saldırıların farkı, bir saldırının adımları, phishing testleri nasıl yapılır ve yapay zekâ bu işi nasıl değiştiriyor?",
+    "etiketler": [
+      "phishing",
+      "sosyal-mühendislik",
+      "farkındalık",
+      "yapay-zeka"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 7
+  },
+  {
+    "slug": "nmap-101",
+    "baslik": "Nmap 101: Sıfırdan temel tarama parametreleri",
+    "tarih": "2026-07-06",
+    "tur": "blog",
+    "ozet": "Nmap nedir, Kali'de nasıl kurulur ve en çok kullanılan parametreler (-p, -sS, -sV) ne işe yarar? Örnek çıktılarla kısa bir başlangıç rehberi.",
+    "etiketler": [
+      "nmap",
+      "keşif",
+      "ağ",
+      "pentest",
+      "başlangıç"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 2
+  },
+  {
+    "slug": "pentest-test-labi",
+    "baslik": "Kendi pentest test labımı neden ve nasıl kurdum?",
+    "tarih": "2025-07-01",
+    "tur": "blog",
+    "ozet": "Önce kendim pratik yapmak için kurduğum, sonra ekip arkadaşlarımla paylaştığım test laboratuvarı: farklı zorlukta 4 makine ve bir Active Directory ortamı.",
+    "etiketler": [
+      "pentest",
+      "active-directory",
+      "lab",
+      "kendi-kendine-öğrenme"
+    ],
+    "platform": "",
+    "kategori": "",
+    "zorluk": "",
+    "dakika": 1
   }
 ]

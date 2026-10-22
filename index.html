@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
 /* Telefondan dışarıdan gelen ziyaretçiyi dört mobil sürümden birine rastgele gönder.
-   Site içinden gelen (ör. "Ağ görünümü" butonu) ya da ?masaustu=1 ile açan yönlendirilmez. */
+   Site içinden gelen ya da ?masaustu=1 ile açan yönlendirilmez. */
 (function () {
   try {
     var phone = matchMedia("(pointer: coarse)").matches && Math.min(screen.width, innerWidth) < 760;
@@ -21,808 +21,251 @@
 })();
 </script>
 <title>Doğukan Sansar — Junior Pentester</title>
-<meta name="description" content="Doğukan Sansar — junior pentester. Etkileşimli özgeçmiş, CTF çözümleri ve blog yazıları.">
+<meta name="description" content="Doğukan Sansar — junior pentester. Özgeçmiş, projeler, CTF çözümleri ve blog yazıları.">
+<meta name="theme-color" content="#0b1424">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #05070c;
-    --panel: rgba(13, 17, 26, 0.82);
-    --border: rgba(255, 255, 255, 0.09);
-    --text: #e4e8f0;
-    --muted: #8a94a8;
-    --self: #ffffff;
-    --job: #fbbf24;
-    --project: #38bdf8;
-    --skill: #4ade80;
-    --edu: #c084fc;
-    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
-    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --bg: #0b1424; --bg-soft: #0f1b2e; --card: #13223a; --card-hi: #172b48; --rule: #223650;
+    --text: #efe7da; --soft: #cdc6ba; --muted: #94a0b6;
+    --orange: #f59145; --orange-2: #ffb673; --blue: #74a8f0; --sky: #9cc3ff; --copper: #cf9163; --sand: #e9c79a; --green: #7fd0a0;
+    --serif: "Fraunces", Georgia, serif; --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--sans); }
-  button { font: inherit; color: inherit; }
-  a { color: var(--project); }
-
-  canvas#net { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
-  canvas#net.dragging { cursor: grabbing; }
-  canvas#net.pointer { cursor: pointer; }
-
-  .glass { background: var(--panel); border: 1px solid var(--border); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-
-  /* ---- Header ---- */
-  .id { position: fixed; top: 22px; left: 26px; pointer-events: none; max-width: min(420px, 60vw); }
-  .id .hello { font-family: var(--mono); font-size: 12px; color: var(--skill); letter-spacing: .08em; }
-  .id h1 { margin: 6px 0 4px; font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
-  .id .role { color: var(--muted); font-size: 14px; }
-
-  .legend { position: fixed; top: 130px; left: 26px; display: flex; flex-direction: column; gap: 6px; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 8px; padding: 5px 11px 5px 9px; border-radius: 999px;
-    font-family: var(--mono); font-size: 11.5px; cursor: pointer; transition: opacity .2s, border-color .2s;
-    background: rgba(13,17,26,.6); border: 1px solid var(--border); width: max-content;
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16.5px; line-height: 1.62;
+    background-image:
+      radial-gradient(1100px 520px at 88% -8%, rgba(117,168,230,.12), transparent 62%),
+      radial-gradient(760px 520px at -8% 8%, rgba(245,145,69,.09), transparent 60%);
+    background-attachment: fixed;
   }
-  .chip:hover { border-color: rgba(255,255,255,.25); }
-  .chip.off { opacity: .35; }
-  .chip i { width: 9px; height: 9px; border-radius: 50%; display: block; box-shadow: 0 0 8px currentColor; background: currentColor; }
-  .chip .n { color: var(--muted); }
+  a { color: var(--orange-2); text-decoration: none; }
+  a:hover { color: var(--orange); }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  ::selection { background: var(--orange); color: #241001; }
 
-  .top-right { position: fixed; top: 20px; right: 22px; display: flex; gap: 8px; align-items: center; }
-  .tbtn {
-    font-family: var(--mono); font-size: 12px; padding: 8px 13px; border-radius: 8px; cursor: pointer;
-    border: 1px solid var(--border); background: rgba(13,17,26,.7); text-decoration: none; color: var(--text);
-    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  .page { max-width: 880px; margin: 0 auto; padding: 30px 26px 80px; }
+
+  .top { display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 13px; margin-bottom: 40px; }
+  .top .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); flex-shrink: 0; }
+  .top .tag { color: var(--muted); }
+  .top .sp { flex: 1; }
+  .top a, .top button { color: var(--muted); padding: 6px 10px; border-radius: 8px; border: 1px solid transparent; }
+  .top a:hover, .top button:hover { color: var(--text); background: rgba(170,190,220,.07); }
+  .top a.evren { color: var(--orange-2); border-color: rgba(245,145,69,.4); }
+  .top a.evren:hover { background: rgba(245,145,69,.12); color: var(--orange-2); }
+
+  header { position: relative; }
+  .hi { font-family: var(--mono); font-size: 14px; color: var(--orange); }
+  .hi .cursor { display: inline-block; width: 8px; height: 1.05em; background: var(--orange); margin-left: 2px; vertical-align: -2px; animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(40px, 7vw, 62px); line-height: 1.02; letter-spacing: -0.02em; margin: 10px 0 2px; }
+  .underline { display: block; width: 210px; max-width: 70%; height: 11px; margin: 2px 0 14px; color: var(--orange); }
+  .role { font-size: 19px; color: var(--soft); }
+  .role b { color: var(--text); font-weight: 600; }
+  .contact { font-family: var(--mono); font-size: 13px; margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 10px; }
+  .contact a { display: inline-flex; align-items: center; gap: 7px; color: var(--soft); background: var(--card); border: 1px solid var(--rule); border-radius: 999px; padding: 6px 13px; }
+  .contact a:hover { border-color: var(--orange); color: var(--orange-2); }
+  .contact a span { color: var(--copper); }
+  .summary { margin: 24px 0 0; max-width: 660px; color: var(--soft); font-size: 17px; }
+
+  section { margin-top: 46px; }
+  .sec-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .sec-head .no { font-family: var(--mono); font-size: 13px; color: var(--orange); }
+  .sec-head h2 { font-family: var(--serif); font-weight: 600; font-size: 25px; margin: 0; letter-spacing: -0.01em; }
+  .sec-head::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--rule), transparent); }
+  .sec-head a { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+
+  .entry { position: relative; background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px 16px; margin-bottom: 14px;
+           border-left: 3px solid var(--copper); transition: transform .18s, border-color .18s, background .18s; }
+  .entry:hover { transform: translateX(3px); background: var(--card-hi); border-left-color: var(--orange); }
+  .entry .line { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap; }
+  .entry h3 { margin: 0; font-size: 17.5px; font-weight: 600; }
+  .entry h3 .org { font-weight: 400; color: var(--soft); }
+  .entry h3 .with { font-weight: 400; color: var(--muted); font-size: 14.5px; }
+  .entry .when { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .entry p { margin: 7px 0 0; color: var(--soft); font-size: 15.5px; }
+  .entry ul { margin: 8px 0 0; padding-left: 2px; list-style: none; }
+  .entry li { position: relative; padding-left: 20px; margin: 4px 0; color: var(--soft); font-size: 15.5px; }
+  .entry li::before { content: ""; position: absolute; left: 1px; top: 11px; width: 8px; height: 2px; background: var(--orange); border-radius: 2px; }
+  .entry .stack { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .entry .stack span { font-family: var(--mono); font-size: 11.5px; color: var(--sand); background: rgba(233,199,154,.08); border: 1px solid rgba(233,199,154,.18); border-radius: 6px; padding: 2px 8px; }
+
+  .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 680px) { .projects { grid-template-columns: 1fr; } }
+  .proj { position: relative; display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 18px 18px 16px; overflow: hidden; transition: transform .18s, border-color .18s; }
+  .proj::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--orange), var(--copper)); }
+  .proj:hover { transform: translateY(-3px); border-color: rgba(245,145,69,.5); }
+  .proj.feat { grid-column: 1 / -1; }
+  .proj .yr { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .proj h3 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 5px 0 2px; }
+  .proj .with { font-size: 13.5px; color: var(--muted); margin-bottom: 7px; }
+  .proj p { margin: 0 0 12px; color: var(--soft); font-size: 15px; flex: 1; }
+  .proj .stack { display: flex; flex-wrap: wrap; gap: 5px; }
+  .proj .stack span { font-family: var(--mono); font-size: 11px; color: var(--sand); }
+  .proj .stack span + span::before { content: "· "; color: var(--muted); }
+  .proj .more { margin-top: 12px; font-family: var(--mono); font-size: 12.5px; color: var(--orange-2); }
+
+  dl.skills { margin: 0; display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px 20px; }
+  dl.skills dt { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--copper); padding-top: 4px; }
+  dl.skills dd { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  dl.skills .chip { font-family: var(--mono); font-size: 12.5px; color: var(--soft); background: var(--card); border: 1px solid var(--rule); border-radius: 7px; padding: 3px 10px; }
+  @media (max-width: 560px) { dl.skills { grid-template-columns: 1fr; gap: 4px 0; } dl.skills dt { margin-top: 10px; } }
+
+  .posts { display: grid; gap: 10px; }
+  .post { display: grid; grid-template-columns: 96px 1fr; gap: 0 16px; align-items: baseline; padding: 11px 14px; border-radius: 11px; border: 1px solid transparent; color: var(--text); }
+  .post:hover { background: var(--card); border-color: var(--rule); }
+  .post .d { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  .post .ttl { font-size: 16px; }
+  .post .badge { font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: .05em; padding: 1px 7px; border-radius: 4px; margin-right: 9px; vertical-align: 1px; }
+  .post .badge.ctf { color: #ff9f7f; background: rgba(255,138,107,.13); }
+  .post .badge.blog { color: var(--sky); background: rgba(140,188,255,.13); }
+  @media (max-width: 520px) { .post { grid-template-columns: 1fr; gap: 3px; } }
+  .more-row { margin-top: 10px; font-family: var(--mono); font-size: 13px; }
+  .empty { color: var(--muted); font-size: 15px; }
+
+  footer { margin-top: 56px; border-top: 1px solid var(--rule); padding-top: 22px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  footer button { color: var(--muted); }
+  footer button:hover { color: var(--orange-2); }
+
+  @media print {
+    :root { --bg: #fff; --bg-soft: #fff; --card: #fff; --card-hi: #fff; --text: #111; --soft: #333; --muted: #666; --rule: #ddd; --orange: #b85a12; --orange-2: #b85a12; --copper: #9a6a45; --sand: #7a4f2c; }
+    body { background: #fff; }
+    .top, .proj .more, footer button, .cursor { display: none !important; }
+    .entry, .proj { break-inside: avoid; border-left-color: #ddd; }
+    .entry:hover, .proj:hover { transform: none; }
+    a { color: #111; }
+    section { margin-top: 20px; }
   }
-  .tbtn:hover { border-color: rgba(255,255,255,.3); }
-  .tbtn b { color: var(--skill); }
-  .tbtn.accent { background: var(--skill); color: #052611; border-color: var(--skill); font-weight: 700; }
-
-  /* ---- Timeline ---- */
-  .timeline {
-    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
-    width: min(720px, calc(100vw - 32px)); border-radius: 14px; padding: 12px 18px 14px;
-    display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center;
-  }
-  .play {
-    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255,255,255,.04);
-    cursor: pointer; display: grid; place-items: center;
-  }
-  .play:hover { border-color: var(--skill); }
-  .play svg { width: 14px; height: 14px; fill: var(--text); }
-  .track { position: relative; height: 34px; cursor: pointer; touch-action: none; }
-  .track .line { position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: rgba(255,255,255,.1); border-radius: 2px; }
-  .track .fill { position: absolute; left: 0; top: 11px; height: 2px; background: linear-gradient(90deg, var(--edu), var(--project), var(--skill)); border-radius: 2px; }
-  .track .knob {
-    position: absolute; top: 5px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%;
-    background: #fff; box-shadow: 0 0 0 4px rgba(74,222,128,.25), 0 0 16px rgba(74,222,128,.6);
-  }
-  .track .tick { position: absolute; top: 22px; font-family: var(--mono); font-size: 10px; color: var(--muted); transform: translateX(-50%); }
-  .track .dot { position: absolute; top: 8px; width: 2px; height: 8px; margin-left: -1px; background: rgba(255,255,255,.18); }
-  .year { font-family: var(--mono); font-weight: 700; font-size: 26px; min-width: 70px; text-align: right; letter-spacing: -0.02em; }
-  .year small { display: block; font-size: 10px; font-weight: 400; color: var(--muted); letter-spacing: .05em; }
-
-  .hint {
-    position: fixed; left: 50%; bottom: 108px; transform: translateX(-50%); font-family: var(--mono); font-size: 11.5px;
-    color: var(--muted); display: flex; gap: 18px; transition: opacity .8s; pointer-events: none; white-space: nowrap;
-  }
-  .hint span b { color: var(--text); font-weight: 500; }
-  .hint.hide { opacity: 0; }
-
-  .cam { position: fixed; right: 22px; bottom: 104px; display: flex; flex-direction: column; gap: 6px; }
-  .cam button { width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-family: var(--mono); font-size: 15px; }
-
-  /* ---- Detail panel ---- */
-  .panel {
-    position: fixed; top: 76px; right: 22px; bottom: 100px; width: min(380px, calc(100vw - 32px));
-    border-radius: 16px; padding: 24px 24px 20px; overflow-y: auto;
-    transform: translateX(calc(100% + 40px)); transition: transform .45s cubic-bezier(.2,.8,.2,1);
-  }
-  .panel.open { transform: none; }
-  .panel .close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: transparent; cursor: pointer; }
-  .panel .type { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-  .panel .type i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
-  .panel h2 { margin: 10px 0 2px; font-size: 24px; letter-spacing: -0.02em; line-height: 1.2; padding-right: 30px; }
-  .panel .org { color: var(--muted); font-size: 14.5px; }
-  .panel .date { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 6px; }
-  .panel p { color: #c3cad8; font-size: 14.5px; line-height: 1.65; }
-  .panel ul { padding-left: 18px; color: #c3cad8; font-size: 14px; line-height: 1.6; }
-  .panel li { margin: 4px 0; }
-  .panel h4 { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin: 22px 0 10px; font-weight: 500; }
-  .conns { display: flex; flex-wrap: wrap; gap: 6px; }
-  .conn { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,.03); display: inline-flex; gap: 7px; align-items: center; }
-  .conn:hover { background: rgba(255,255,255,.08); }
-  .conn i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  .conn span { color: var(--text); }
-  .panel .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-
-
-  noscript { position: fixed; inset: 0; display: grid; place-items: center; padding: 30px; text-align: center; }
-
-  /* ---- Mobile ---- */
-  @media (max-width: 720px) {
-    .id { top: 16px; left: 16px; }
-    .id .role { font-size: 12.5px; }
-    .legend { top: auto; bottom: 104px; left: 0; right: 0; flex-direction: row; overflow-x: auto; padding: 0 16px; scrollbar-width: none; }
-    .legend::-webkit-scrollbar { display: none; }
-    .top-right { top: 14px; right: 14px; flex-direction: column; align-items: flex-end; }
-    .top-right .wide { display: none; }
-    .timeline { bottom: 14px; padding: 10px 14px 12px; gap: 12px; }
-    .year { font-size: 20px; min-width: 52px; }
-    .hint { display: none; }
-    .cam { display: none; }
-    .panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 68vh; border-radius: 18px 18px 0 0; transform: translateY(105%); }
-    .panel.open { transform: none; }
-  }
-
 </style>
 </head>
 <body>
+<div class="page">
+  <nav class="top">
+    <span class="dot" title="Yeni fırsatlara açık"></span>
+    <span class="tag" id="avail"></span>
+    <span class="sp"></span>
+    <a href="yazilar.html" id="nav-posts"></a>
+    <a class="evren" href="evren.html" id="nav-evren"></a>
+    <button id="lang-btn" aria-label="Dil / Language"></button>
+  </nav>
 
-<canvas id="net" aria-label="Etkileşimli kariyer ağı / interactive career network"></canvas>
+  <header>
+    <div class="hi"><span id="hi"></span><span class="cursor"></span></div>
+    <h1 id="name"></h1>
+    <svg class="underline" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8 C 60 2, 110 2, 150 6 S 250 11, 298 4" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>
+    <div class="role" id="role"></div>
+    <div class="contact" id="contact"></div>
+    <p class="summary" id="summary"></p>
+  </header>
 
-<div class="id">
-  <div class="hello" id="hello"></div>
-  <h1 id="name"></h1>
-  <div class="role" id="role"></div>
+  <section id="experience"><div class="sec-head"><span class="no">01</span><h2 data-t="experience"></h2></div><div id="exp"></div></section>
+  <section id="projects"><div class="sec-head"><span class="no">02</span><h2 data-t="projects"></h2></div><div class="projects" id="proj"></div></section>
+  <section id="skills"><div class="sec-head"><span class="no">03</span><h2 data-t="skills"></h2></div><div id="skl"></div></section>
+  <section id="education"><div class="sec-head"><span class="no">04</span><h2 data-t="education"></h2></div><div id="edu"></div></section>
+  <section id="posts"><div class="sec-head"><span class="no">05</span><h2 data-t="posts"></h2><a href="yazilar.html" id="all-posts"></a></div><div class="posts" id="pst"></div></section>
+
+  <footer>
+    <span id="evren-note"></span>
+    <button id="print-btn"></button>
+  </footer>
 </div>
 
-<div class="legend" id="legend"></div>
-
-<div class="top-right">
-  <a class="tbtn" href="yazilar.html" id="posts-link"></a>
-  <button class="tbtn" id="lang-btn" aria-label="Dil / Language"></button>
-  <button class="tbtn wide" id="contact-btn"></button>
-  <a class="tbtn accent" href="klasik.html" id="flat-btn"></a>
-</div>
-
-<div class="hint" id="hint"></div>
-
-<div class="timeline glass">
-  <button class="play" id="play" aria-label="Oynat / Play"></button>
-  <div class="track" id="track"></div>
-  <div class="year" id="year"></div>
-</div>
-
-<div class="cam">
-  <button class="glass" id="zin" aria-label="Yakınlaştır">+</button>
-  <button class="glass" id="zout" aria-label="Uzaklaştır">−</button>
-  <button class="glass" id="zfit" aria-label="Ortala">◎</button>
-</div>
-
-<aside class="panel glass" id="panel" aria-live="polite"></aside>
-
-<noscript>Bu site JavaScript gerektirir. / This site requires JavaScript.</noscript>
-
+<script src="assets/veri.js"></script>
 <script>
-/* =========================================================================
-   İÇERİK — Siteyi güncellemek için yalnızca bu bölümü düzenle.
-   CONTENT — edit only this block.
-
-   Her öğe ağda bir yıldızdır. "links" ile başka öğelere bağlanır.
-   Yeteneklerin yılı otomatik hesaplanır (ilk kullanıldığı öğenin yılı).
-   Metinler { tr: "...", en: "..." } şeklinde ya da tek dilde düz yazı olabilir.
-   ========================================================================= */
-const PROFILE = {
-  name: "Doğukan Sansar",
-  role: { tr: "Junior Pentester", en: "Junior Penetration Tester" },
-  summary: {
-    tr: "Lise öğrencisiyim ve 2 yılı aşkın süredir ForDefence'ta junior pentester olarak çalışıyorum. Sızma testleri ve phishing farkındalık simülasyonları yapıyor, boş zamanlarımda kendi güvenlik ve yapay zekâ araçlarımı geliştiriyorum.",
-    en: "I'm a high school student and have been working as a junior penetration tester at ForDefence for over two years. I run penetration tests and phishing awareness simulations, and in my spare time I build my own security and AI tools.",
-  },
-  email: "talhadogukansansar@gmail.com",
-  socials: [
-    { label: "GitHub",   url: "https://github.com/Edogusss" },
-    { label: "LinkedIn", url: "https://www.linkedin.com/in/do%C4%9Fukan-sansar-b55b90273" },
-  ],
-  languages: { tr: "Türkçe (ana dil) · İngilizce (C1) · Almanca (B2)", en: "Turkish (native) · English (C1) · German (B2)" },
-  cvPdf: "",   // örn. "cv.pdf"
-};
-
-const ITEMS = [
-  // ---- Eğitim / Education
-  { id: "school", type: "edu", year: 2023.7,
-    title: { tr: "Lise Öğrenimi", en: "High School" },
-    date: { tr: "Devam ediyor", en: "In progress" },
-    desc: { tr: "Okulla birlikte profesyonel olarak siber güvenlik alanında çalışıyorum.", en: "Working professionally in cyber security alongside school." },
-    links: ["linux"] },
-
-  // ---- Deneyim / Experience
-  { id: "fordefence", type: "job", year: 2024.35,
-    title: { tr: "Junior Pentester", en: "Junior Penetration Tester" }, org: "ForDefence",
-    date: { tr: "May 2024 — Günümüz", en: "May 2024 — Present" },
-    points: {
-      tr: ["Web uygulamaları ve ağ altyapıları için sızma testleri", "Bulguların raporlanması ve çözüm önerileri", "Kurumlar için phishing farkındalık simülasyonları", "Kendi kurduğum test laboratuvarını ekip içi pratik için paylaşma"],
-      en: ["Penetration tests for web applications and network infrastructure", "Reporting findings with remediation advice", "Phishing awareness simulations for organisations", "Sharing my own test lab with the team for hands-on practice"],
-    },
-    links: ["pentest", "nmap", "kali", "websec", "phishing", "reporting", "linux"] },
-
-  // ---- Projeler / Projects  (ilk link = projenin bağlı olduğu yer)
-  { id: "testlab", type: "project", year: 2025.5, title: { tr: "Pentest Test Labı", en: "Pentest Test Lab" },
-    desc: { tr: "Farklı zorluk seviyelerinde 4 test makinesi ve bir Active Directory laboratuvarından oluşan kendi test ortamım. Önce kendim için kurdum, herkesin işine yarayacağını fark edince ekip arkadaşlarımla paylaştım.",
-            en: "My own test environment: 4 test machines of varying difficulty plus an Active Directory lab. I built it for myself first, then shared it with my teammates once I saw how useful it was." },
-    links: ["me", "fordefence", "pentest", "ad", "linux", "kali"], url: "" },
-  { id: "xsslab", type: "project", year: 2026.6, title: { tr: "XSS Akademi", en: "XSS Academy" },
-    desc: { tr: "Kendi öğrenimim için yaptığım, teori ve uygulamayı birleştiren, seviye seviye ilerleyen bir XSS eğitim platformu. Her seviyede açıklama, savunmasız kod örneği, ipucu ve çözüm var.",
-            en: "A level-based XSS training platform I built for my own learning, combining theory and practice. Each level has an explanation, vulnerable code sample, hint and solution." },
-    links: ["me", "websec", "node", "js"], url: "" },
-  { id: "orbit", type: "project", year: 2026.53, title: "Orbit",
-    desc: { tr: "Kendi sunucumda çalışan, WhatsApp ve Telegram üzerinden konuşan, sesle uyanan ve sesimden beni tanıyan yapay zekâ asistanı. Takvim, mail, hatırlatma ve toplantı notlarını tek yerde topluyor.",
-            en: "A self-hosted AI assistant that talks over WhatsApp and Telegram, wakes up by voice and recognises me by my voice. It brings calendar, mail, reminders and meeting notes together." },
-    links: ["me", "python", "fastapi", "nextjs", "ts", "docker", "postgres", "redis", "llm", "voice"], url: "yazi.html?y=orbit" },
-  { id: "site", type: "project", year: 2026.8, title: { tr: "Bu site", en: "This site" },
-    desc: { tr: "Kariyerimi canlı bir ağ olarak gösteren etkileşimli özgeçmiş; CTF çözümlerim ve blog yazılarım için ayrı bir bölümü var.",
-            en: "An interactive resume showing my career as a living network, with a section for my CTF write-ups and blog posts." },
-    links: ["me", "js"], url: "" },
-
-  // ---- Yetenekler / Skills  (yılı otomatik)
-  { id: "pentest", type: "skill", title: { tr: "Sızma Testi", en: "Penetration Testing" }, group: "sec" },
-  { id: "websec", type: "skill", title: { tr: "Web Güvenliği", en: "Web Security" }, group: "sec" },
-  { id: "phishing", type: "skill", title: { tr: "Phishing Simülasyonu", en: "Phishing Simulation" }, group: "sec" },
-  { id: "ad", type: "skill", title: "Active Directory", group: "sec" },
-  { id: "reporting", type: "skill", title: { tr: "Pentest Raporlama", en: "Pentest Reporting" }, group: "sec" },
-  { id: "nmap", type: "skill", title: "Nmap", group: "tool" },
-  { id: "kali", type: "skill", title: "Kali Linux", group: "tool" },
-  { id: "linux", type: "skill", title: "Linux", group: "tool" },
-  { id: "docker", type: "skill", title: "Docker", group: "tool" },
-  { id: "python", type: "skill", title: "Python", group: "dev" },
-  { id: "fastapi", type: "skill", title: "FastAPI", group: "dev" },
-  { id: "js", type: "skill", title: "JavaScript", group: "dev" },
-  { id: "ts", type: "skill", title: "TypeScript", group: "dev" },
-  { id: "nextjs", type: "skill", title: "Next.js", group: "dev" },
-  { id: "node", type: "skill", title: "Node.js", group: "dev" },
-  { id: "postgres", type: "skill", title: "PostgreSQL", group: "dev" },
-  { id: "redis", type: "skill", title: "Redis", group: "dev" },
-  { id: "llm", type: "skill", title: { tr: "Yerel LLM (Ollama)", en: "Local LLMs (Ollama)" }, group: "ai" },
-  { id: "voice", type: "skill", title: { tr: "Ses Tanıma (Whisper, Vosk)", en: "Speech (Whisper, Vosk)" }, group: "ai" },
-];
-
-/* ---- Arayüz metinleri / UI strings ---- */
 const UI = {
   tr: {
-    hello: "// merhaba, ben", types: { self: "Ben", job: "Deneyim", project: "Proje", skill: "Yetenek", edu: "Eğitim" },
-    flat: "CV", contact: "İletişim", close: "Kapat ✕", print: "Yazdır / PDF",
-    connections: "Bağlantılar", usedIn: "Kullandığım yerler", built: "Kullanılanlar", firstSeen: "İlk kez",
-    hint: ["<b>kaydır</b> → zamanda gez", "<b>sürükle</b> → ağı oynat", "<b>tıkla</b> → hikâyeyi aç"],
-    now: "bugün", posts: "✎ CTF & Blog", year: "yıl", about: "Hakkımda", languages: "Diller", view: "İncele ↗",
-    sections: { job: "Deneyim", edu: "Eğitim", project: "Projeler", skill: "Yetenekler" },
-    groups: { sec: "Güvenlik", tool: "Araçlar", dev: "Yazılım", ai: "Yapay Zekâ" },
+    experience: "Deneyim", projects: "Projeler", skills: "Yetenekler", education: "Eğitim", posts: "Son yazılar",
+    navPosts: "✎ ctf & blog", navEvren: "✦ evren", langs: "Diller", allPosts: "tümü →", avail: "yeni fırsatlara açık",
+    hi: "merhaba, ben", read: "yazıyı oku →", open: "aç →", feat: "öne çıkan",
+    noPosts: "Henüz yazı yok; ilk CTF çözümlerim yakında burada olacak.",
+    evren: 'Bu özgeçmişin canlı bir hâli de var → <a href="evren.html">evren</a>', print: "yazdır / pdf",
   },
   en: {
-    hello: "// hi, I'm", types: { self: "Me", job: "Experience", project: "Project", skill: "Skill", edu: "Education" },
-    flat: "CV", contact: "Contact", close: "Close ✕", print: "Print / PDF",
-    connections: "Connections", usedIn: "Where I used it", built: "Built with", firstSeen: "Since",
-    hint: ["<b>scroll</b> → travel in time", "<b>drag</b> → play with the web", "<b>click</b> → open the story"],
-    now: "today", posts: "✎ CTF & Blog", year: "year", about: "About", languages: "Languages", view: "View ↗",
-    sections: { job: "Experience", edu: "Education", project: "Projects", skill: "Skills" },
-    groups: { sec: "Security", tool: "Tools", dev: "Development", ai: "AI" },
+    experience: "Experience", projects: "Projects", skills: "Skills", education: "Education", posts: "Latest posts",
+    navPosts: "✎ ctf & blog", navEvren: "✦ universe", langs: "Languages", allPosts: "all →", avail: "open to opportunities",
+    hi: "hi, I'm", read: "read →", open: "open →", feat: "featured",
+    noPosts: "No posts yet; my first CTF write-ups will be here soon.",
+    evren: 'There is also a living version of this resume → <a href="evren.html">universe</a>', print: "print / pdf",
   },
 };
-
-/* =========================================================================
-   Motor / Engine
-   ========================================================================= */
-const COLORS = { self: "#ffffff", job: "#fbbf24", project: "#38bdf8", skill: "#4ade80", edu: "#c084fc" };
-const RADIUS = { self: 20, job: 12, edu: 12, project: 9, skill: 5 };
-const LINK_LEN = { self: 170, job: 120, edu: 120, project: 95, skill: 70 };
-const TYPE_ORDER = ["job", "project", "skill", "edu"];
-
-let lang = null;
-try { lang = localStorage.getItem("lang"); } catch (e) {}
-if (lang !== "tr" && lang !== "en") lang = (navigator.language || "tr").toLowerCase().startsWith("en") ? "en" : "tr";
-const T = (v) => (v == null ? "" : typeof v === "object" && !Array.isArray(v) ? (v[lang] ?? v.tr ?? v.en) : v);
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const u = () => UI[lang];
 const $ = (id) => document.getElementById(id);
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let posts = [];
+const extLink = (href, text, cls = "") => `<a class="${cls}" href="${esc(href)}"${/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : ""}>${esc(text)}</a>`;
 
-/* ---- Build graph ---- */
-const nodes = [{ id: "me", type: "self", title: PROFILE.name, year: -Infinity }, ...ITEMS.map((x) => ({ ...x }))];
-const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
-const edges = [];
-const edgeKey = new Set();
-function addEdge(a, b) {
-  if (!byId[a] || !byId[b] || a === b) return;
-  const k = a < b ? a + "|" + b : b + "|" + a;
-  if (edgeKey.has(k)) return;
-  edgeKey.add(k);
-  edges.push({ s: byId[a], t: byId[b] });
-}
-for (const n of ITEMS) {
-  if (n.type === "job" || n.type === "edu") addEdge("me", n.id);
-  (n.links || []).forEach((l) => addEdge(n.id, l));
-}
-nodes.forEach((n) => (n.nb = new Set()));
-edges.forEach((e) => { e.s.nb.add(e.t); e.t.nb.add(e.s); });
-// Yetenek yılı = onu kullanan ilk öğenin yılı
-for (const n of nodes) if (n.type === "skill" && n.year == null) {
-  const ys = [...n.nb].map((m) => m.year).filter((y) => isFinite(y));
-  n.year = ys.length ? Math.min(...ys) : 0;
-}
-for (const n of nodes) {
-  n.x = (Math.random() - 0.5) * 10; n.y = (Math.random() - 0.5) * 10; n.vx = 0; n.vy = 0;
-  n.vis = n.type === "self" ? 1 : 0; n.phase = Math.random() * Math.PI * 2;
-  n.r = RADIUS[n.type] + (n.type === "skill" ? Math.min(n.nb.size, 6) * 0.9 : 0);
-}
-const me = byId.me;
-
-const years = nodes.filter((n) => isFinite(n.year)).map((n) => n.year);
-const NOW = new Date().getFullYear() + new Date().getMonth() / 12;
-const T0 = Math.floor(Math.min(...years)) - 0.6;
-const T1 = Math.max(NOW, Math.max(...years)) + 0.05;
-let time = reduced ? T1 : T0;
-let playing = !reduced;
-const hidden = new Set();
-
-/* ---- Canvas & camera ---- */
-const cv = $("net"), ctx = cv.getContext("2d");
-let W = 0, H = 0, DPR = 1;
-const cam = { x: 0, y: 0, k: 1, tk: 1, tx: 0, ty: 0 };
-function resize() {
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = innerWidth; H = innerHeight;
-  cv.width = W * DPR; cv.height = H * DPR;
-  fitTarget();
-}
-// Kamera, kullanıcı elle yakınlaştırana/kaydırana kadar ağın tamamını ekrana sığdırır.
-let autoFit = true;
-function autoFrame() {
-  const vis = nodes.filter((n) => n.vis > 0.3);
-  if (vis.length < 2) return;
-  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-  for (const n of vis) { x0 = Math.min(x0, n.x); y0 = Math.min(y0, n.y); x1 = Math.max(x1, n.x); y1 = Math.max(y1, n.y); }
-  const mobile = W < 720;
-  const padX = mobile ? 50 : 140, top = mobile ? 110 : 90, bottom = mobile ? 150 : 120;
-  const k = Math.min((W - padX * 2) / Math.max(x1 - x0, 1), (H - top - bottom) / Math.max(y1 - y0, 1));
-  cam.tk = Math.max(0.3, Math.min(1.3, k));
-  cam.tx = (x0 + x1) / 2;
-  cam.ty = (y0 + y1) / 2 + (bottom - top) / 2 / cam.tk;
-}
-function fitTarget() {
-  const mobile = W < 720;
-  cam.tk = Math.max(0.45, Math.min(1.3, Math.min(W, H) / (mobile ? 640 : 760)));
-  cam.tx = mobile ? 0 : -40; cam.ty = mobile ? 20 : 0;
-}
-const toScreen = (x, y) => [(x - cam.x) * cam.k + W / 2, (y - cam.y) * cam.k + H / 2];
-const toWorld = (sx, sy) => [(sx - W / 2) / cam.k + cam.x, (sy - H / 2) / cam.k + cam.y];
-
-/* ---- Stars ---- */
-const stars = Array.from({ length: 260 }, () => ({
-  x: Math.random() * 3000 - 1500, y: Math.random() * 3000 - 1500,
-  z: 0.05 + Math.random() * 0.25, s: Math.random() * 1.2 + 0.2, p: Math.random() * 6.28,
-}));
-
-/* ---- Physics ---- */
-let alpha = 1;
-function physics() {
-  const live = nodes.filter((n) => n.vis > 0.02);
-  // itme + çarpışma
-  for (let i = 0; i < live.length; i++) {
-    const a = live[i];
-    for (let j = i + 1; j < live.length; j++) {
-      const b = live[j];
-      let dx = b.x - a.x, dy = b.y - a.y;
-      let d2 = dx * dx + dy * dy;
-      if (d2 < 0.01) { dx = Math.random() - 0.5; dy = Math.random() - 0.5; d2 = 0.5; }
-      const d = Math.sqrt(d2);
-      const str = (a.type === "skill" && b.type === "skill" ? 260 : 520) * alpha * a.vis * b.vis;
-      let f = str / d2;
-      const min = a.r + b.r + 14;
-      if (d < min) f += (min - d) / d * 0.25;
-      a.vx -= dx * f; a.vy -= dy * f; b.vx += dx * f; b.vy += dy * f;
-    }
-  }
-  // yaylar
-  for (const e of edges) {
-    const a = e.s, b = e.t;
-    if (a.vis < 0.02 || b.vis < 0.02) continue;
-    const L = (LINK_LEN[a.type] + LINK_LEN[b.type]) / 2;
-    const dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
-    const s = 0.5 / Math.min(a.nb.size, b.nb.size + 1);
-    const l = (d - L) / d * alpha * s * Math.min(a.vis, b.vis);
-    const wa = a.nb.size / (a.nb.size + b.nb.size), wb = 1 - wa;
-    b.vx -= dx * l * wa; b.vy -= dy * l * wa; a.vx += dx * l * wb; a.vy += dy * l * wb;
-  }
-  for (const n of live) {
-    n.vx -= n.x * 0.014 * alpha; n.vy -= n.y * 0.014 * alpha;   // merkeze çekim
-    if (n === me || n === drag.node) { n.vx = n.vy = 0; if (n === me && drag.node !== me) { n.x *= 0.9; n.y *= 0.9; } continue; }
-    n.vx *= 0.6; n.vy *= 0.6;
-    n.x += n.vx; n.y += n.vy;
-  }
-  alpha += ((drag.node ? 0.3 : 0.012) - alpha) * 0.02;
+function entry(x) {
+  const pts = T(x.points) || [];
+  const title = x.type === "project" && x.url ? extLink(rootUrl(x.url), T(x.title)) : esc(T(x.title));
+  return `<div class="entry">
+    <div class="line"><h3>${title}${x.org ? `<span class="org">, ${esc(T(x.org))}</span>` : ""}${x.with ? `<span class="with"> · ${withHtml(x)}</span>` : ""}</h3><span class="when">${esc(T(x.date) || Math.floor(x.year))}</span></div>
+    ${x.desc ? `<p>${esc(T(x.desc))}</p>` : ""}
+    ${pts.length ? `<ul>${pts.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+    ${x.type !== "edu" && skillsOf(x).length ? `<div class="stack">${skillsOf(x).map((s) => `<span>${esc(T(s.title))}</span>`).join("")}</div>` : ""}
+  </div>`;
 }
 
-/* ---- Timeline-driven visibility ---- */
-function updateVisibility() {
-  for (const n of nodes) {
-    if (n === me) continue;
-    const target = !hidden.has(n.type) && time >= n.year ? 1 : 0;
-    if (target && n.vis === 0) {
-      // yeni doğan yıldız: görünür bir komşusunun yanında belirir
-      const parent = [...n.nb].find((m) => m.vis > 0.5) || me;
-      const a = Math.random() * Math.PI * 2;
-      n.x = parent.x + Math.cos(a) * 30; n.y = parent.y + Math.sin(a) * 30; n.vx = n.vy = 0;
-      n.born = performance.now();
-      alpha = Math.max(alpha, 0.5);
-    }
-    n.vis += (target - n.vis) * 0.08;
-    if (n.vis < 0.003 && !target) n.vis = 0;
-  }
+function renderPosts() {
+  $("all-posts").textContent = u().allPosts;
+  $("pst").innerHTML = posts.length
+    ? posts.slice(0, 5).map((p) => `<a class="post" href="yazi.html?y=${encodeURIComponent(p.slug)}"><span class="d">${esc(p.tarih)}</span><span class="ttl"><span class="badge ${p.tur}">${p.tur === "ctf" ? "CTF" : "BLOG"}</span>${esc(p.baslik)}</span></a>`).join("")
+      + (posts.length > 5 ? `<div class="more-row"><a href="yazilar.html">${u().allPosts}</a></div>` : "")
+    : `<p class="empty">${u().noPosts}</p>`;
 }
 
-/* ---- Interaction state ---- */
-let hover = null, selected = null;
-const drag = { node: null, pan: false, sx: 0, sy: 0, moved: false, id: null };
-const pointers = new Map();
-let pinch = null;
-
-function focusSet() {
-  const f = selected || hover;
-  if (!f) return null;
-  const s = new Set([f, ...f.nb]);
-  return s;
-}
-
-/* ---- Render ---- */
-function hexA(hex, a) {
-  const n = parseInt(hex.slice(1), 16);
-  return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
-}
-
-function draw(now) {
-  const t = now / 1000;
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  ctx.fillStyle = "#05070c"; ctx.fillRect(0, 0, W, H);
-
-  // nebula
-  const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
-  g.addColorStop(0, "rgba(56,189,248,0.06)"); g.addColorStop(0.5, "rgba(192,132,252,0.03)"); g.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-
-  for (const s of stars) {
-    let x = (s.x - cam.x * s.z) % W, y = (s.y - cam.y * s.z) % H;
-    if (x < 0) x += W; if (y < 0) y += H;
-    ctx.globalAlpha = 0.35 + 0.35 * Math.sin(t * 1.3 + s.p);
-    ctx.fillStyle = "#cfd8ff";
-    ctx.fillRect(x, y, s.s, s.s);
-  }
-  ctx.globalAlpha = 1;
-
-  const fs = focusSet();
-  const fl = (n) => n.x + Math.cos(t * 0.6 + n.phase) * 2.5;
-  const fy = (n) => n.y + Math.sin(t * 0.8 + n.phase) * 2.5;
-
-  // kenarlar
-  ctx.lineWidth = 1;
-  for (const e of edges) {
-    const a = e.s, b = e.t, v = Math.min(a.vis, b.vis);
-    if (v < 0.02) continue;
-    const on = fs && fs.has(a) && fs.has(b) && (a === (selected || hover) || b === (selected || hover));
-    const [x1, y1] = toScreen(fl(a), fy(a)), [x2, y2] = toScreen(fl(b), fy(b));
-    const grad = ctx.createLinearGradient(x1, y1, x2, y2);
-    const al = (fs ? (on ? 0.85 : 0.04) : 0.22) * v;
-    grad.addColorStop(0, hexA(COLORS[a.type], al)); grad.addColorStop(1, hexA(COLORS[b.type], al));
-    ctx.strokeStyle = grad; ctx.lineWidth = on ? 1.6 : 1;
-    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-    if (on) {
-      // akan ışık parçacıkları
-      for (let k = 0; k < 3; k++) {
-        const p = (t * 0.45 + k / 3) % 1;
-        const from = a === (selected || hover) ? 0 : 1;
-        const q = from ? 1 - p : p;
-        ctx.fillStyle = hexA(COLORS[(selected || hover).type], 0.9 * v);
-        ctx.beginPath(); ctx.arc(x1 + (x2 - x1) * q, y1 + (y2 - y1) * q, 1.8, 0, 6.28); ctx.fill();
-      }
-    }
-  }
-
-  // düğümler
-  const sorted = nodes.filter((n) => n.vis > 0.01).sort((a, b) => a.r - b.r);
-  for (const n of sorted) {
-    const [x, y] = toScreen(fl(n), fy(n));
-    const dim = fs && !fs.has(n);
-    const age = n.born ? (now - n.born) / 1000 : 9;
-    const pop = age < 0.6 ? 1 + Math.sin(age / 0.6 * Math.PI) * 0.6 : 1;
-    const r = n.r * Math.min(1.6, Math.max(0.6, cam.k)) * n.vis * pop * (n === hover || n === selected ? 1.25 : 1);
-    const c = COLORS[n.type];
-    const al = (dim ? 0.15 : 1) * n.vis;
-
-    // hale
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 4);
-    glow.addColorStop(0, hexA(c, 0.35 * al)); glow.addColorStop(1, hexA(c, 0));
-    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x, y, r * 4, 0, 6.28); ctx.fill();
-
-    if (n.type === "self") {
-      // yörünge halkaları
-      ctx.strokeStyle = `rgba(255,255,255,${0.18 * al})`; ctx.lineWidth = 1;
-      for (let k = 0; k < 2; k++) {
-        ctx.beginPath(); ctx.arc(x, y, r * (1.7 + k * 0.6) + Math.sin(t * 2 + k) * 2, 0, 6.28); ctx.stroke();
-      }
-    }
-    ctx.fillStyle = hexA(c, al);
-    ctx.beginPath(); ctx.arc(x, y, r, 0, 6.28); ctx.fill();
-    if (n.type === "job" || n.type === "edu") {
-      ctx.strokeStyle = hexA("#05070c", al); ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(x, y, r * 0.45, 0, 6.28); ctx.stroke();
-    }
-
-    // etiket
-    const showLabel = n.type !== "skill" || cam.k > 0.75 || (fs && fs.has(n));
-    if (showLabel && n.vis > 0.3) {
-      const label = T(n.title);
-      ctx.globalAlpha = (dim ? 0.2 : 1) * Math.min(1, (n.vis - 0.3) * 2);
-      if (n.type === "self") ctx.font = `700 ${15}px Inter, sans-serif`;
-      else if (n.type === "skill") ctx.font = `400 11px "JetBrains Mono", monospace`;
-      else ctx.font = `600 12.5px Inter, sans-serif`;
-      ctx.textAlign = "center"; ctx.textBaseline = "top";
-      ctx.fillStyle = n.type === "skill" ? "#a9f5c4" : "#e4e8f0";
-      ctx.shadowColor = "#05070c"; ctx.shadowBlur = 6;
-      ctx.fillText(label, x, y + r + (n.type === "self" ? 18 : 7));
-      ctx.shadowBlur = 0; ctx.globalAlpha = 1;
-    }
-  }
-}
-
-/* ---- Main loop ---- */
-let lastUi = 0, lastFrame = 0;
-function frame(now) {
-  const dt = lastFrame ? Math.min(0.25, (now - lastFrame) / 1000) : 0;
-  lastFrame = now;
-  if (playing) {
-    time += (T1 - T0) * dt / 9;   // kare hızından bağımsız: ~9 saniyede tüm kariyer
-    if (time >= T1) { time = T1; playing = false; updatePlayIcon(); }
-  }
-  updateVisibility();
-  physics();
-  const k = 0.08;
-  cam.k += (cam.tk - cam.k) * k;
-  if (autoFit && !selected && !drag.node) autoFrame();
-  if (!drag.pan && !pinch) { cam.x += (cam.tx - cam.x) * k; cam.y += (cam.ty - cam.y) * k; }
-  draw(now);
-  if (now - lastUi > 50) { updateTimeline(); lastUi = now; }
-  requestAnimationFrame(frame);
-}
-
-/* ---- Hit test ---- */
-function pick(sx, sy) {
-  const [wx, wy] = toWorld(sx, sy);
-  let best = null, bd = Infinity;
-  for (const n of nodes) {
-    if (n.vis < 0.5) continue;
-    const d = Math.hypot(n.x - wx, n.y - wy);
-    const rr = (n.r * Math.min(1.6, Math.max(0.6, cam.k))) / cam.k + 8 / cam.k;
-    if (d < rr && d < bd) { best = n; bd = d; }
-  }
-  return best;
-}
-
-/* ---- Pointer events ---- */
-cv.addEventListener("pointerdown", (e) => {
-  cv.setPointerCapture(e.pointerId);
-  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  if (pointers.size === 2) {
-    const [p, q] = [...pointers.values()];
-    autoFit = false;
-    pinch = { d: Math.hypot(p.x - q.x, p.y - q.y), k: cam.tk };
-    drag.node = null; drag.pan = false;
-    return;
-  }
-  dismissHint();
-  const n = pick(e.clientX, e.clientY);
-  drag.sx = e.clientX; drag.sy = e.clientY; drag.moved = false; drag.id = e.pointerId;
-  if (n) { drag.node = n; } else { drag.pan = true; drag.cx = cam.x; drag.cy = cam.y; }
-  cv.classList.add("dragging");
-});
-cv.addEventListener("pointermove", (e) => {
-  if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  if (pinch && pointers.size === 2) {
-    const [p, q] = [...pointers.values()];
-    cam.tk = cam.k = clampK(pinch.k * Math.hypot(p.x - q.x, p.y - q.y) / pinch.d);
-    return;
-  }
-  if (drag.id === e.pointerId && (drag.node || drag.pan)) {
-    if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 4) drag.moved = true;
-    if (drag.node && drag.moved) {
-      const [wx, wy] = toWorld(e.clientX, e.clientY);
-      drag.node.x = wx; drag.node.y = wy;
-      alpha = Math.max(alpha, 0.3);
-    } else if (drag.pan) {
-      autoFit = false;
-      cam.x = cam.tx = drag.cx - (e.clientX - drag.sx) / cam.k;
-      cam.y = cam.ty = drag.cy - (e.clientY - drag.sy) / cam.k;
-    }
-    return;
-  }
-  const n = pick(e.clientX, e.clientY);
-  hover = n;
-  cv.classList.toggle("pointer", !!n);
-});
-function endPointer(e) {
-  pointers.delete(e.pointerId);
-  if (pointers.size < 2) pinch = null;
-  if (drag.id !== e.pointerId) return;
-  if (!drag.moved) {
-    const n = pick(e.clientX, e.clientY);
-    if (n) select(n); else if (drag.pan) select(null);
-  }
-  drag.node = null; drag.pan = false; drag.id = null;
-  cv.classList.remove("dragging");
-  if (e.pointerType !== "mouse") hover = null;
-}
-cv.addEventListener("pointerup", endPointer);
-cv.addEventListener("pointercancel", endPointer);
-cv.addEventListener("pointerleave", () => { if (!drag.node && !drag.pan) hover = null; });
-
-const clampK = (k) => Math.max(0.3, Math.min(3, k));
-// Kaydırma = zamanda yolculuk · Ctrl/⌘ + kaydırma = yakınlaştırma
-cv.addEventListener("wheel", (e) => {
-  e.preventDefault();
-  dismissHint();
-  if (e.ctrlKey || e.metaKey) { autoFit = false; cam.tk = clampK(cam.tk * Math.exp(-e.deltaY * 0.002)); return; }
-  playing = false; updatePlayIcon();
-  time = Math.max(T0, Math.min(T1, time + e.deltaY * 0.004));
-}, { passive: false });
-
-$("zin").onclick = () => { autoFit = false; cam.tk = clampK(cam.tk * 1.25); };
-$("zout").onclick = () => { autoFit = false; cam.tk = clampK(cam.tk / 1.25); };
-$("zfit").onclick = () => { autoFit = true; select(null); };
-
-addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { select(null); }
-  if (e.target !== document.body) return;
-  if (e.key === "ArrowRight") { time = Math.min(T1, time + 0.25); playing = false; updatePlayIcon(); }
-  if (e.key === "ArrowLeft") { time = Math.max(T0, time - 0.25); playing = false; updatePlayIcon(); }
-  if (e.key === " ") { e.preventDefault(); togglePlay(); }
-});
-
-/* ---- Selection & panel ---- */
-function select(n) {
-  selected = n;
-  const p = $("panel");
-  if (!n) { p.classList.remove("open"); cam.tx = cam.x; cam.ty = cam.y; return; }
-  // seçilen yıldızı panelin solunda ortala
-  const mobile = W < 720;
-  cam.tx = n.x + (mobile ? 0 : 160 / cam.tk);
-  cam.ty = n.y + (mobile ? H * 0.22 / cam.tk : 0);
-  renderPanel();
-  p.classList.add("open");
-  p.scrollTop = 0;
-}
-
-function renderPanel() {
-  const n = selected; if (!n) return;
-  const u = UI[lang], c = COLORS[n.type];
-  let h = `<button class="close" id="pclose" aria-label="${u.close}">✕</button>`;
-  h += `<div class="type" style="color:${c}"><i></i>${u.types[n.type]}</div>`;
-  if (n.type === "self") {
-    h += `<h2>${esc(PROFILE.name)}</h2><div class="org">${esc(T(PROFILE.role))}</div>`;
-    h += `<p>${esc(T(PROFILE.summary))}</p>`;
-    h += `<h4>${u.languages}</h4><p style="margin:0">${esc(T(PROFILE.languages))}</p>`;
-    h += `<div class="links">${contactButtons()}</div>`;
-  } else {
-    h += `<h2>${esc(T(n.title))}</h2>`;
-    if (n.org) h += `<div class="org">${esc(T(n.org))}</div>`;
-    if (n.date) h += `<div class="date">${esc(T(n.date))}</div>`;
-    else if (n.type === "skill") h += `<div class="date">${u.firstSeen}: ${Math.floor(n.year)}</div>`;
-    else if (n.type === "project") h += `<div class="date">${Math.floor(n.year)}</div>`;
-    if (n.desc) h += `<p>${esc(T(n.desc))}</p>`;
-    const pts = T(n.points);
-    if (pts && pts.length) h += `<ul>${pts.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`;
-    if (n.url) h += `<div class="links"><a class="tbtn" href="${esc(n.url)}"${/^https?:/.test(n.url) ? ' target="_blank" rel="noopener"' : ""}>${u.view}</a></div>`;
-  }
-  const groups = {};
-  [...n.nb].sort((a, b) => (a.year || 0) - (b.year || 0)).forEach((m) => (groups[m.type] = groups[m.type] || []).push(m));
-  const order = n.type === "skill" ? ["job", "project", "edu"] : ["self", "job", "edu", "project", "skill"];
-  for (const ty of order) {
-    if (!groups[ty]) continue;
-    const label = ty === "skill" ? u.built : n.type === "skill" ? u.usedIn : u.connections;
-    h += `<h4>${label} · ${u.types[ty]}</h4><div class="conns">` +
-      groups[ty].map((m) => `<button class="conn" data-id="${m.id}" style="color:${COLORS[m.type]}"><i></i><span>${esc(T(m.title))}</span></button>`).join("") +
-      `</div>`;
-  }
-  $("panel").innerHTML = h;
-  $("pclose").onclick = () => select(null);
-  $("panel").querySelectorAll(".conn").forEach((b) => (b.onclick = () => {
-    const m = byId[b.dataset.id];
-    if (m.vis < 0.5) { time = Math.max(time, m.year + 0.01); playing = false; updatePlayIcon(); }
-    select(m);
-  }));
-}
-
-function contactButtons() {
-  return `<a class="tbtn accent" href="mailto:${esc(PROFILE.email)}">${esc(PROFILE.email)}</a>` +
-    PROFILE.socials.map((s) => `<a class="tbtn" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)} ↗</a>`).join("") +
-    (PROFILE.cvPdf ? `<a class="tbtn" href="${esc(PROFILE.cvPdf)}" download>PDF ↓</a>` : "");
-}
-
-/* ---- Timeline UI ---- */
-const track = $("track");
-function buildTrack() {
-  let h = `<div class="line"></div><div class="fill" id="tfill"></div>`;
-  for (let y = Math.ceil(T0); y <= Math.floor(T1); y++) {
-    const p = ((y - T0) / (T1 - T0)) * 100;
-    h += `<div class="dot" style="left:${p}%"></div>`;
-    if (W >= 520 || y % 2 === 0) h += `<div class="tick" style="left:${p}%">${y}</div>`;
-  }
-  h += `<div class="knob" id="tknob"></div>`;
-  track.innerHTML = h;
-}
-function updateTimeline() {
-  const p = ((time - T0) / (T1 - T0)) * 100;
-  const f = $("tfill"), k = $("tknob");
-  if (f) f.style.width = p + "%";
-  if (k) k.style.left = p + "%";
-  const atEnd = time >= T1 - 0.01;
-  $("year").innerHTML = `${atEnd ? Math.floor(NOW) : Math.floor(Math.max(time, T0 + 0.6))}<small>${atEnd ? UI[lang].now : UI[lang].year}</small>`;
-}
-function scrub(e) {
-  const r = track.getBoundingClientRect();
-  time = T0 + Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * (T1 - T0);
-}
-track.addEventListener("pointerdown", (e) => {
-  track.setPointerCapture(e.pointerId); playing = false; updatePlayIcon(); dismissHint(); scrub(e);
-  track.onpointermove = scrub;
-});
-track.addEventListener("pointerup", () => (track.onpointermove = null));
-
-function updatePlayIcon() {
-  $("play").innerHTML = playing
-    ? `<svg viewBox="0 0 14 14"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg>`
-    : `<svg viewBox="0 0 14 14"><path d="M3 1.5v11l9.5-5.5z"/></svg>`;
-}
-function togglePlay() {
-  if (!playing && time >= T1 - 0.01) time = T0;
-  playing = !playing; updatePlayIcon();
-}
-$("play").onclick = togglePlay;
-
-/* ---- Hint ---- */
-let hintTimer = setTimeout(dismissHint, 14000);
-function dismissHint() { $("hint").classList.add("hide"); clearTimeout(hintTimer); }
-
-/* ---- Legend / filters ---- */
-function renderLegend() {
-  const u = UI[lang];
-  $("legend").innerHTML = TYPE_ORDER.map((ty) => {
-    const cnt = nodes.filter((n) => n.type === ty).length;
-    return `<button class="chip ${hidden.has(ty) ? "off" : ""}" data-t="${ty}" style="color:${COLORS[ty]}" aria-pressed="${!hidden.has(ty)}">
-      <i></i><span style="color:var(--text)">${u.types[ty]}</span><span class="n">${cnt}</span></button>`;
-  }).join("");
-  $("legend").querySelectorAll(".chip").forEach((b) => (b.onclick = () => {
-    const ty = b.dataset.t;
-    hidden.has(ty) ? hidden.delete(ty) : hidden.add(ty);
-    if (selected && hidden.has(selected.type)) select(null);
-    renderLegend();
-  }));
-}
-
-$("contact-btn").onclick = () => select(me);
-
-/* ---- i18n ---- */
-function renderText() {
-  const u = UI[lang];
+function render() {
   document.documentElement.lang = lang;
-  $("hello").textContent = u.hello;
-  $("name").textContent = PROFILE.name;
-  $("role").textContent = T(PROFILE.role);
-  $("lang-btn").innerHTML = lang === "tr" ? "<b>TR</b> / EN" : "TR / <b>EN</b>";
-  $("flat-btn").textContent = u.flat + " ↗";
-  $("contact-btn").textContent = u.contact;
-  $("posts-link").textContent = u.posts;
-  $("hint").innerHTML = u.hint.map((x) => `<span>${x}</span>`).join("");
-  renderLegend(); renderPanel(); updateTimeline();
-}
-$("lang-btn").onclick = () => {
-  lang = lang === "tr" ? "en" : "tr";
-  try { localStorage.setItem("lang", lang); } catch (e) {}
-  renderText();
-};
+  $("lang-btn").textContent = lang === "tr" ? "english" : "türkçe";
+  $("avail").textContent = u().avail;
+  $("nav-posts").textContent = u().navPosts;
+  $("nav-evren").textContent = u().navEvren;
+  $("hi").textContent = u().hi + " ";
+  document.querySelectorAll("[data-t]").forEach((el) => (el.textContent = u()[el.dataset.t]));
 
-/* ---- Start ---- */
-addEventListener("resize", () => { resize(); buildTrack(); });
-resize(); buildTrack(); updatePlayIcon(); renderText();
-cam.k = cam.tk * 0.4; cam.x = cam.tx; cam.y = cam.ty;
-if (reduced) for (let i = 0; i < 300; i++) { updateVisibility(); physics(); }
-requestAnimationFrame(frame);
+  const job = ofType("job")[0];
+  $("name").textContent = PROFILE.name;
+  $("role").innerHTML = `<b>${esc(T(PROFILE.role))}</b>${job ? ` — ${esc(T(job.org))}` : ""}`;
+  const ICON = { email: "✉", GitHub: "◴", LinkedIn: "in" };
+  $("contact").innerHTML = [
+    `<a href="mailto:${esc(PROFILE.email)}"><span>${ICON.email}</span>${esc(PROFILE.email)}</a>`,
+    ...PROFILE.socials.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener"><span>${ICON[s.label] || "↗"}</span>${esc(s.label)}</a>`),
+  ].join("");
+  $("summary").textContent = T(PROFILE.summary);
+
+  $("exp").innerHTML = ofType("job").sort((a, b) => b.year - a.year).map((x) => entry(x)).join("");
+  const ORDER = ["orbit", "reconsuite", "testlab", "xsslab", "site"], rank = (p) => (ORDER.includes(p.id) ? ORDER.indexOf(p.id) : 99);
+  const projects = ofType("project").slice().sort((a, b) => rank(a) - rank(b) || b.year - a.year);
+  $("proj").innerHTML = projects.map((p, i) => `
+    <article class="proj${i === 0 ? " feat" : ""}">
+      <span class="yr">${i === 0 ? u().feat + " · " : ""}${Math.floor(p.year)}</span>
+      <h3>${esc(T(p.title))}</h3>
+      ${p.with ? `<div class="with">${withHtml(p)}</div>` : ""}
+      <p>${esc(T(p.desc))}</p>
+      <div class="stack">${skillsOf(p).map((s) => `<span>${esc(T(s.title))}</span>`).join("")}</div>
+      ${p.url ? extLink(rootUrl(p.url), p.id === "orbit" ? u().read : u().open, "more") : ""}
+    </article>`).join("");
+  $("edu").innerHTML = ofType("edu").map((x) => entry(x)).join("");
+
+  const groups = {};
+  ofType("skill").forEach((s) => (groups[s.group] = groups[s.group] || []).push(T(s.title)));
+  $("skl").innerHTML = `<dl class="skills">
+    ${Object.entries(groups).map(([g, list]) => `<dt>${esc(T(SKILL_GROUPS[g]))}</dt><dd>${list.map((t) => `<span class="chip">${esc(t)}</span>`).join("")}</dd>`).join("")}
+    <dt>${u().langs}</dt><dd>${T(PROFILE.languages).split("·").map((l) => `<span class="chip">${esc(l.trim())}</span>`).join("")}</dd>
+  </dl>`;
+
+  renderPosts();
+  $("evren-note").innerHTML = u().evren;
+  $("print-btn").textContent = u().print;
+}
+
+$("lang-btn").onclick = () => { setLang(lang === "tr" ? "en" : "tr"); render(); };
+$("print-btn").onclick = () => print();
+
+render();
+loadPosts().then((p) => { posts = p; renderPosts(); });
 </script>
 </body>
 </html>
